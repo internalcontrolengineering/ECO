@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>ECO — Red Cósmica Universal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<style>
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+:root {
+  --bg: #010206;
+  --panel-bg: rgba(5, 10, 20, 0.94);
+  --border: rgba(78, 231, 255, 0.25);
+  --primary: #4ee7ff;
+  --primary-glow: rgba(78, 231, 255, 0.45);
+  --text: #e2ebf6;
+  --muted: #6b7c96;
+  --card-bg: rgba(0, 0, 0, 0.65);
+  --danger: #ef4444;
+  --danger-glow: rgba(239, 68, 68, 0.4);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body.theme-zeus {
+  --bg: #7ec8f8;
+  --panel-bg: rgba(255, 255, 255, 0.94);
+  --border: rgba(217, 119, 6, 0.4);
+  --primary: #d97706;
+  --primary-glow: rgba(245, 158, 11, 0.45);
+  --text: #0f172a;
+  --muted: #475569;
+  --card-bg: rgba(240, 246, 255, 0.85);
+}
+
+html, body {
+  width: 100%; height: 100%; height: 100dvh;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  user-select: none;
+  touch-action: none;
+  transition: background 0.6s ease, color 0.4s ease;
+}
+
+canvas#map3d {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  display: block; z-index: 0;
+}
+
+.bg-fx {
+  position: fixed; inset: 0; z-index: 1; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 20%, rgba(1,2,6,0.7) 75%, rgba(1,2,6,0.98) 100%);
+  transition: opacity 0.6s ease;
+}
+body.theme-zeus .bg-fx {
+  background: radial-gradient(circle at 50% 50%, transparent 35%, rgba(126, 200, 248, 0.2) 70%, rgba(85, 168, 230, 0.5) 100%);
+}
+
+.overlay {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+  padding: calc(14px + var(--safe-top)) 14px calc(14px + var(--safe-bottom));
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  background: rgba(1, 2, 6, 0.88);
+  transition: opacity .4s ease, visibility .4s ease;
+  overflow-y: auto;
+}
+body.theme-zeus .overlay {
+  background: rgba(126, 200, 248, 0.78);
+}
+.overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.panel {
+  width: 100%; max-width: 440px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 50px rgba(0,0,0,0.85);
+  padding: clamp(16px, 4vw, 24px);
+  border-radius: 8px;
+  margin: auto;
+  transition: all 0.4s ease;
+}
+
+.title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 9vw, 3.8rem);
+  letter-spacing: 0.3em;
+  font-weight: 900;
+  color: var(--primary);
+  text-shadow: 0 0 25px var(--primary-glow);
+  text-align: center;
+}
+.subtitle {
+  color: var(--muted);
+  font-size: clamp(0.65rem, 2.2vw, 0.75rem);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.field { margin-bottom: 11px; }
+.field label {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.62rem; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 4px; font-weight: 600;
+}
+.field input, .field select {
+  width: 100%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .3s, box-shadow .3s;
+  border-radius: 4px;
+}
+.field select option { background: #070e1a; color: #fff; }
+body.theme-zeus .field select option { background: #fff; color: #0f172a; }
+.field input:focus, .field select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 14px var(--primary-glow);
+}
+.field input[readonly] { opacity: 0.75; cursor: not-allowed; }
+
+.geo-badge {
+  font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 4px;
+}
+.geo-badge.verifying { color: #ffb84e; }
+.geo-badge.locked { color: #10b981; }
+
+.pwd-hint {
+  font-size: 0.58rem; color: var(--muted); margin-top: 3px; line-height: 1.3;
+}
+
+.terms-accordion {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin: 10px 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+.terms-header {
+  padding: 8px 12px;
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer;
+}
+.terms-content {
+  display: none;
+  max-height: 120px;
+  overflow-y: auto;
+  padding: 10px 12px;
+  border-top: 1px solid var(--border);
+  font-size: 0.6rem;
+  line-height: 1.5;
+  color: var(--muted);
+  background: rgba(0, 0, 0, 0.4);
+}
+.terms-accordion.open .terms-content { display: block; }
+
+.check-row {
+  display: flex; align-items: flex-start; gap: 8px;
+  margin-bottom: 8px; cursor: pointer;
+}
+.check-row input {
+  accent-color: var(--primary);
+  margin-top: 2px; width: 15px; height: 15px; cursor: pointer; flex-shrink: 0;
+}
+.check-row span {
+  font-size: 0.65rem; color: var(--text); line-height: 1.35;
+}
+
+.btn-primary {
+  position: relative; width: 100%;
+  padding: 12px 16px;
+  background: rgba(78, 231, 255, 0.1);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .35s ease;
+  border-radius: 4px;
+  margin-top: 6px;
+}
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 0 25px var(--primary-glow);
+  background: var(--primary);
+  color: #010206;
+}
+.btn-primary:disabled {
+  opacity: 0.4; cursor: not-allowed; border-color: var(--muted); color: var(--muted);
+}
+
+.btn-danger {
+  border-color: var(--danger) !important;
+  color: var(--danger) !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+.btn-danger:hover:not(:disabled) {
+  background: var(--danger) !important;
+  color: #fff !important;
+  box-shadow: 0 0 25px var(--danger-glow) !important;
+}
+
+.switch-auth-link {
+  text-align: center; margin-top: 14px;
+  font-size: 0.74rem; color: var(--muted);
+}
+.switch-auth-link a {
+  color: var(--primary); text-decoration: none; font-weight: 700;
+  cursor: pointer; letter-spacing: 0.05em; margin-left: 4px;
+}
+
+.choice-cards {
+  display: flex; gap: 10px; margin-top: 12px;
+}
+.choice-card {
+  flex: 1; padding: 16px 10px;
+  border-radius: 6px; cursor: pointer;
+  transition: all .3s ease; text-align: center;
+}
+.choice-card.dark-option {
+  background: #050b14; border: 2px solid #00e5ff; color: #4ee7ff;
+}
+.choice-card.dark-option:hover {
+  box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); transform: translateY(-2px);
+}
+.choice-card.light-option {
+  background: #f8fafc; border: 2px solid #d97706; color: #b45309;
+}
+.choice-card.light-option:hover {
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.5); transform: translateY(-2px);
+}
+.choice-card h3 { font-family: 'Cinzel'; font-size: 1rem; margin-bottom: 4px; }
+.choice-card p { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; }
+
+.hud {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 50;
+  transition: opacity .4s ease;
+}
+.hud.hidden { opacity: 0; }
+
+.hud-top {
+  display: flex; justify-content: center; align-items: center; gap: 8px;
+  padding: calc(8px + var(--safe-top)) 12px 8px;
+  background: linear-gradient(to bottom, var(--panel-bg), transparent);
+  pointer-events: auto; flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  padding: 5px 10px; min-width: 74px;
+  display: flex; flex-direction: column; align-items: center;
+  backdrop-filter: blur(8px);
+  border-radius: 4px;
+}
+.stat-card .label { font-size: 0.46rem; letter-spacing: 0.16em; color: var(--muted); text-transform: uppercase; }
+.stat-card .val { font-family: 'Cinzel', serif; font-size: 0.92rem; color: var(--primary); font-weight: 700; }
+
+.hud-actions {
+  position: fixed; bottom: calc(14px + var(--safe-bottom));
+  left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px; pointer-events: auto; z-index: 60;
+  width: max-content; max-width: 96vw; flex-wrap: wrap; justify-content: center;
+}
+.btn-action {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 14px;
+  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  backdrop-filter: blur(8px);
+  border-radius: 4px; transition: all .3s;
+}
+.btn-action:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+
+.admin-gear-container {
+  position: fixed; top: calc(10px + var(--safe-top)); right: 12px;
+  z-index: 65; pointer-events: auto; display: none;
+}
+.btn-gear {
+  width: 38px; height: 38px;
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 1rem;
+  box-shadow: 0 0 15px var(--primary-glow);
+  transition: transform .4s ease;
+}
+.btn-gear:hover { transform: rotate(90deg); }
+.admin-gear-menu {
+  position: absolute; top: 46px; right: 0;
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  border-radius: 6px; padding: 10px;
+  display: flex; flex-direction: column; gap: 10px;
+  box-shadow: 0 0 35px rgba(0,0,0,0.9);
+  opacity: 0; pointer-events: none; transform: translateY(-8px);
+  transition: all .3s ease; width: 200px;
+}
+.admin-gear-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.gear-section {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.gear-section label {
+  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--primary); font-weight: 700;
+}
+.gear-select {
+  width: 100%; background: var(--card-bg);
+  border: 1px solid var(--border); color: var(--text);
+  padding: 6px 8px; font-size: 0.72rem; border-radius: 3px;
+  outline: none; font-family: inherit;
+}
+.gear-select option { background: #070e1a; color: #fff; }
+body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
+
+.admin-board {
+  position: fixed;
+  top: calc(64px + var(--safe-top)); left: 12px;
+  width: 290px; max-width: calc(100vw - 24px);
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 30px rgba(0,0,0,0.85);
+  padding: 12px; z-index: 55; pointer-events: auto;
+  border-radius: 6px;
+}
+.admin-board-title {
+  font-family: 'Cinzel'; font-size: 0.8rem; color: var(--primary);
+  letter-spacing: 0.16em; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+}
+.admin-board-msg {
+  font-size: 0.7rem; color: var(--text); line-height: 1.4; font-style: italic;
+}
+.admin-board-editor { display: none; margin-top: 8px; }
+.admin-board-editor textarea {
+  width: 100%; background: var(--card-bg);
+  border: 1px solid var(--border); color: var(--text);
+  font-family: inherit; font-size: 0.72rem; padding: 6px; resize: vertical;
+  outline: none; height: 60px; border-radius: 3px;
+}
+
+.leaderboard-card {
+  position: fixed;
+  left: 12px; bottom: calc(65px + var(--safe-bottom));
+  width: 270px; max-width: calc(100vw - 24px);
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 30px rgba(0,0,0,0.85);
+  padding: 10px; z-index: 55; pointer-events: auto;
+  border-radius: 6px; display: none;
+}
+.leaderboard-title {
+  font-family: 'Cinzel'; font-size: 0.75rem; color: var(--primary);
+  letter-spacing: 0.15em; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+}
+.leader-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 6px; margin-bottom: 4px;
+  background: var(--card-bg); border-left: 2px solid var(--primary);
+  font-size: 0.63rem; border-radius: 2px;
+}
+.leader-item .name { font-weight: 700; color: var(--text); }
+.leader-item .tier-info { text-align: right; color: var(--muted); font-size: 0.56rem; }
+.leader-item .tier-info span { color: var(--primary); font-weight: 600; }
+
+.inspector-card {
+  position: fixed; right: 12px; bottom: calc(65px + var(--safe-bottom));
+  width: 260px; max-width: calc(100vw - 24px);
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 30px rgba(0,0,0,0.85);
+  padding: 12px; z-index: 70; pointer-events: auto; display: none;
+  border-radius: 6px;
+}
+.inspector-card h4 { font-family: 'Cinzel'; color: var(--primary); letter-spacing: 0.15em; font-size: 0.88rem; }
+.inspector-card p { font-size: 0.66rem; color: var(--muted); margin-top: 3px; }
+.inspector-card span { color: var(--text); font-weight: 600; }
+
+.admin-modal-box {
+  width: 100%; max-width: 380px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 50px rgba(0,0,0,0.9);
+  padding: 22px; border-radius: 8px; text-align: center;
+}
+.admin-modal-box h3 {
+  font-family: 'Cinzel'; font-size: 1.15rem; color: var(--primary); margin-bottom: 8px;
+}
+.admin-modal-box p {
+  font-size: 0.75rem; color: var(--muted); line-height: 1.5; margin-bottom: 16px;
+}
+.admin-modal-actions {
+  display: flex; gap: 10px; justify-content: center;
+}
+.admin-modal-actions button {
+  flex: 1; padding: 10px 14px; font-size: 0.75rem;
+  border-radius: 4px; cursor: pointer; font-family: inherit;
+  letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+}
+.btn-modal-cancel {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+}
+.btn-modal-cancel:hover { color: var(--text); border-color: var(--text); }
+
+.user-delete-list {
+  max-height: 180px; overflow-y: auto; margin-bottom: 15px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.user-delete-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 10px; background: var(--card-bg);
+  border: 1px solid var(--border); border-radius: 4px;
+}
+.user-delete-item span { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+.user-delete-item button {
+  background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger);
+  color: #f87171; padding: 4px 8px; border-radius: 3px; font-size: 0.65rem;
+  cursor: pointer; transition: all .2s;
+}
+.user-delete-item button:hover { background: var(--danger); color: #fff; }
+
+.toast {
+  position: fixed; top: 16px; left: 50%;
+  transform: translateX(-50%) translateY(-30px);
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px 16px; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase;
+  box-shadow: 0 0 25px var(--primary-glow);
+  z-index: 1000; opacity: 0; pointer-events: none;
+  transition: all .3s ease; border-radius: 4px; text-align: center;
+  max-width: 90vw;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+@media (max-width: 600px) {
+  .choice-cards { flex-direction: column; gap: 8px; }
+  .choice-card { padding: 12px 8px; }
+  .stat-card { min-width: 64px; padding: 4px 6px; }
+  .stat-card .val { font-size: 0.82rem; }
+  .hud-actions { bottom: calc(10px + var(--safe-bottom)); gap: 4px; }
+  .btn-action { padding: 6px 10px; font-size: 0.6rem; }
+  .leaderboard-card { width: calc(100vw - 24px); bottom: calc(56px + var(--safe-bottom)); max-height: 160px; overflow-y: auto; }
+  .inspector-card { width: calc(100vw - 24px); right: 12px; bottom: calc(56px + var(--safe-bottom)); }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .panel { max-width: 420px; }
+  .admin-board { width: 300px; }
+  .leaderboard-card { bottom: calc(20px + var(--safe-bottom)); left: 16px; }
+}
+
+@media (min-width: 1025px) {
+  .panel { max-width: 460px; }
+  .admin-board { width: 320px; left: 20px; }
+  .leaderboard-card { left: 20px; bottom: calc(20px + var(--safe-bottom)); width: 290px; }
+  .inspector-card { right: 20px; bottom: calc(20px + var(--safe-bottom)); width: 280px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="map3d"></canvas>
+<div class="bg-fx"></div>
+
+<!-- OVERLAY AUTENTICACIÓN -->
+<div id="authOverlay" class="overlay">
+  <div class="panel">
+    <h1 class="title">ECO</h1>
+    <p class="subtitle">Red Cósmica Global</p>
+
+    <div id="formLogin">
+      <div class="field">
+        <label>Nombre de Usuario o Llave de Acceso</label>
+        <input type="text" id="loginUsername" placeholder="@usuario" autocomplete="off" />
+      </div>
+      <div class="field">
+        <label>Contraseña</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="new-password" />
+      </div>
+      <button class="btn-primary" id="btnSubmitLogin">Entrar a la Red</button>
+
+      <div class="switch-auth-link">
+        ¿No tienes cuenta? <a id="linkGoRegister">Crea tu red aquí</a>
+      </div>
+    </div>
+
+    <div id="formRegister" style="display:none;">
+      <div class="field">
+        <label>Usuario (Automático @)</label>
+        <input type="text" id="regUsername" placeholder="@usuario" autocomplete="off" />
+      </div>
+
+      <div class="field">
+        <label>Contraseña de Acceso</label>
+        <input type="password" id="regPassword" placeholder="••••••••" autocomplete="new-password" />
+        <div class="pwd-hint">Mínimo 8 caracteres, con mayúscula, minúscula y número.</div>
+      </div>
+
+      <div class="field">
+        <label>Género</label>
+        <select id="regGender">
+          <option value="" disabled selected hidden>Seleccionar</option>
+          <option value="Masculino">Masculino</option>
+          <option value="Femenino">Femenino</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>
+          <span>Ubicación GPS Real</span>
+          <span id="geoBadge" class="geo-badge verifying"><i class="fas fa-spinner fa-spin"></i> Fijando posición...</span>
+        </label>
+        <input type="text" id="regCity" value="Esperando satélites..." readonly tabindex="-1" />
+      </div>
+
+      <div class="field">
+        <label>Código Referido (Opcional)</label>
+        <input type="text" id="regReferral" placeholder="ej: @usuario (opcional)" autocomplete="off" />
+      </div>
+
+      <div class="terms-accordion" id="termsAccordion">
+        <div class="terms-header" id="termsHeader">
+          <span><i class="fas fa-balance-scale"></i> Términos Legales y Descargo</span>
+          <i class="fas fa-chevron-down" id="termsIcon"></i>
+        </div>
+        <div class="terms-content">
+          <strong>1. MAYORÍA DE EDAD OBLIGATORIA (MAYORES DE 18 AÑOS):</strong> ECO está estrictamente restringido a personas de al menos 18 años de edad cumplidos.<br><br>
+          <strong>2. JUEGO Y SIMULACIÓN RECREATIVA:</strong> Esta aplicación es exclusivamente un simulador lúdico de ciencia ficción. No es una entidad de inversión ni esquema comercial.<br><br>
+          <strong>3. INEXISTENCIA TOTAL DE GANANCIAS:</strong> Los vínculos carecen de valor económico y no generan réditos monetarios fiduciarios.<br><br>
+          <strong>4. POLÍTICA DE DISPOSITIVO ÚNICO:</strong> Por integridad de red, cada terminal de hardware solo puede consagrar un único nodo.
+        </div>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="ageCheck" />
+        <label for="ageCheck"><span><strong>Confirmo expresamente ser mayor de 18 años.</strong> *</span></label>
+      </div>
+
+      <div class="check-row">
+        <input type="checkbox" id="termsCheck" />
+        <label for="termsCheck"><span>Acepto los términos y comprendo que es <strong>un juego sin ganancias</strong>. *</span></label>
+      </div>
+
+      <button class="btn-primary" id="btnSubmitRegister" disabled>Selecciona tu género</button>
+
+      <div class="switch-auth-link">
+        ¿Ya tienes cuenta? <a id="linkGoLogin">Inicia sesión</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ELECCIÓN INICIAL DE ADMIN -->
+<div id="adminChoiceOverlay" class="overlay hidden">
+  <div class="panel">
+    <h2 style="font-family:'Cinzel'; color:var(--primary); font-size:1.35rem; text-align:center;">PORTAL DEL SOBERANO</h2>
+    <p style="font-size:0.75rem; color:var(--muted); text-align:center; margin-top:4px;">Elige la manifestación para gobernar la red:</p>
+    
+    <div class="choice-cards">
+      <div class="choice-card dark-option" id="chooseHades">
+        <i class="fas fa-moon" style="font-size:1.8rem; margin-bottom:8px;"></i>
+        <h3>@TheHades</h3>
+        <p>Gobernador del Abismo</p>
+        <span style="font-size:0.6rem; color:#4ee7ff; display:block; margin-top:6px;">MODO OSCURO / ABISMO PURO</span>
+      </div>
+
+      <div class="choice-card light-option" id="chooseZeus">
+        <i class="fas fa-bolt" style="font-size:1.8rem; margin-bottom:8px;"></i>
+        <h3>@TheZeus</h3>
+        <p>Soberano del Olimpo</p>
+        <span style="font-size:0.6rem; color:#d97706; display:block; margin-top:6px;">MODO CLARO / CIELO AZUL</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ENGRANAJE CON DESPLEGABLES ORDENADOS (ADMIN) -->
+<div class="admin-gear-container" id="adminGearContainer">
+  <div class="btn-gear" id="btnAdminGear"><i class="fas fa-cog"></i></div>
+  <div class="admin-gear-menu" id="adminGearMenu">
+    <div class="gear-section">
+      <label><i class="fas fa-user-shield"></i> Perfil Soberano</label>
+      <select class="gear-select" id="gearProfileSelect">
+        <option value="HADES">@TheHades (Oscuro)</option>
+        <option value="ZEUS">@TheZeus (Claro)</option>
+      </select>
+    </div>
+
+    <div class="gear-section">
+      <label><i class="fas fa-tools"></i> Gestión de Red</label>
+      <select class="gear-select" id="gearActionSelect">
+        <option value="" disabled selected hidden>Acción de Red...</option>
+        <option value="DELETE">Purgar Nodo</option>
+        <option value="RESET">Resetear Red</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: SELECCIÓN DE USUARIO PARA ELIMINAR -->
+<div id="deleteUserOverlay" class="overlay hidden">
+  <div class="admin-modal-box">
+    <h3><i class="fas fa-user-slash" style="color:var(--danger);"></i> PURGAR NODO</h3>
+    <p>Selecciona el usuario que deseas expulsar de la red cósmica. Sus referidos se redirigirán a ti.</p>
+    <div class="user-delete-list" id="userDeleteContainer"></div>
+    <div class="admin-modal-actions">
+      <button class="btn-modal-cancel" id="btnCancelDeleteUser">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIRMACIÓN DE ACCIÓN PELIGROSA -->
+<div id="confirmOverlay" class="overlay hidden">
+  <div class="admin-modal-box">
+    <h3 id="confirmTitle" style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> ADVERTENCIA</h3>
+    <p id="confirmMsg">¿Estás seguro de ejecutar esta acción destructiva?</p>
+    <div class="admin-modal-actions">
+      <button class="btn-modal-cancel" id="btnCancelConfirm">Cancelar</button>
+      <button class="btn-primary btn-danger" id="btnAcceptConfirm">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud" class="hud hidden">
+  <div class="hud-top">
+    <div class="stat-card">
+      <span class="label">Nodo Activo</span>
+      <span class="val" id="hudUser">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Ubicación GPS</span>
+      <span class="val" id="hudCity" style="color:#10b981;">—</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Vínculos a Favor</span>
+      <span class="val" id="hudRefs" style="color:#ffb84e;">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="label">Conexión Raíz</span>
+      <span class="val" id="hudParent">—</span>
+    </div>
+  </div>
+</div>
+
+<!-- TABLÓN OFICIAL DEL ADMINISTRADOR -->
+<div id="adminBoard" class="admin-board hidden">
+  <div class="admin-board-title">
+    <span id="adminBoardHeader"><i class="fas fa-crown"></i> Mandato Soberano</span>
+    <button id="btnEditAdminMsg" style="display:none; background:transparent; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem;"><i class="fas fa-edit"></i></button>
+  </div>
+  <div class="admin-board-msg" id="adminMsgDisplay">
+    "La red converge en el equilibrio universal."
+  </div>
+  <div class="admin-board-editor" id="adminEditor">
+    <textarea id="adminInput" placeholder="Escribe el nuevo mandato oficial..."></textarea>
+    <button class="btn-primary" id="btnSaveAdminMsg" style="padding:6px; font-size:0.65rem; margin-top:4px;">Decretar Mandato</button>
+  </div>
+</div>
+
+<!-- CUADRO TOP DE JUGADORES (SOLO USUARIOS REGULARES) -->
+<div id="leaderboardCard" class="leaderboard-card">
+  <div class="leaderboard-title">
+    <span><i class="fas fa-trophy" style="color:#ffb84e;"></i> LÍDERES DE RED</span>
+    <span style="font-size:0.55rem; color:var(--muted);">TOP ASCENSIÓN</span>
+  </div>
+  <div id="leaderboardList"></div>
+</div>
+
+<!-- ACCIONES FLOTANTES (VISTA GLOBAL POR DEFECTO) -->
+<div id="hudActions" class="hud-actions hidden">
+  <button class="btn-action" id="btnRecenter"><i class="fas fa-globe-americas"></i> Vista Global</button>
+  <button class="btn-action" id="btnRotateToggle"><i class="fas fa-sync-alt"></i> Rotación</button>
+  <button class="btn-action" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Salir</button>
+</div>
+
+<!-- INSPECTOR DE NODO -->
+<div id="nodeInspector" class="inspector-card">
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <h4 id="inspName">@USUARIO</h4>
+    <button id="closeInsp" style="background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem;">✕</button>
+  </div>
+  <p>Género: <span id="inspGender"></span></p>
+  <p>Ciudad: <span id="inspCity"></span></p>
+  <p>Coordenadas: <span id="inspCoords"></span></p>
+  <p>Enlace Superior: <span id="inspParent" style="color:var(--primary);"></span></p>
+  <p>Subnodos que apuntan a él: <span id="inspRefs" style="color:#ffb84e;">0</span></p>
+</div>
+
+<div class="toast" id="toast">Aviso</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+(() => {
+'use strict';
+
+const EARTH_RADIUS = 26;
+
+const TIERS = [
+  { level: 1, name: 'Jason',        minRefs: 0 },
+  { level: 2, name: 'Heracles',     minRefs: 2 },
+  { level: 3, name: 'Aquiles',      minRefs: 5 },
+  { level: 4, name: 'Odiseo',       minRefs: 9 },
+  { level: 5, name: 'Poseidón',     minRefs: 15 },
+  { level: 6, name: 'Atenea',       minRefs: 25 },
+  { level: 7, name: 'Apolo',        minRefs: 40 },
+  { level: 8, name: 'Gea',          minRefs: 65 },
+  { level: 9, name: 'Cronos',       minRefs: 100 }
+];
+
+const OLYMPUS_SANCTUARIES = [
+  { city: 'Monte Olimpo, Grecia', lat: 40.0856, lon: 22.3584 },
+  { city: 'Atenas (Acrópolis), Grecia', lat: 37.9715, lon: 23.7257 },
+  { city: 'Delfos (Oráculo Sagrado), Grecia', lat: 38.4824, lon: 22.5010 },
+  { city: 'Monte Athos, Grecia', lat: 40.1574, lon: 24.3289 },
+  { city: 'Creta (Cueva de Zeus), Grecia', lat: 35.1633, lon: 25.4983 },
+  { city: 'Roma (Panteón), Italia', lat: 41.8986, lon: 12.4769 },
+  { city: 'Monte Etna (Fragua de Hefesto), Italia', lat: 37.7510, lon: 14.9934 },
+  { city: 'Giza (Gran Pirámide), Egipto', lat: 29.9792, lon: 31.1342 },
+  { city: 'Luxor (Karnak), Egipto', lat: 25.7188, lon: 32.6573 },
+  { city: 'Babilonia, Irak', lat: 32.5422, lon: 44.4210 },
+  { city: 'Monte Sinaí, Egipto', lat: 28.5394, lon: 33.9750 },
+  { city: 'Petra, Jordania', lat: 30.3285, lon: 35.4444 },
+  { city: 'Persépolis, Irán', lat: 29.9354, lon: 52.8914 },
+  { city: 'Monte Kailash, Tíbet', lat: 31.0699, lon: 81.3119 },
+  { city: 'Varanasi, India', lat: 25.3176, lon: 82.9739 },
+  { city: 'Angkor Wat, Camboya', lat: 13.4125, lon: 103.8670 },
+  { city: 'Kioto (Santuario Sagrado), Japón', lat: 34.9671, lon: 135.7727 },
+  { city: 'Monte Fuji, Japón', lat: 35.3606, lon: 138.7274 },
+  { city: 'Teotihuacán, México', lat: 19.6925, lon: -98.8438 },
+  { city: 'Chichén Itzá, México', lat: 20.6843, lon: -88.5678 },
+  { city: 'Tikal, Guatemala', lat: 17.2221, lon: -89.6237 },
+  { city: 'Machu Picchu, Perú', lat: -13.1631, lon: -72.5450 },
+  { city: 'Isla de Pascua, Chile', lat: -27.1127, lon: -109.3497 },
+  { city: 'Stonehenge, Reino Unido', lat: 51.1789, lon: -1.8262 }
+];
+
+function getHourlyAdminSanctuary() {
+  const currentHourEpoch = Math.floor(Date.now() / 3600000);
+  const index = currentHourEpoch % OLYMPUS_SANCTUARIES.length;
+  return OLYMPUS_SANCTUARIES[index];
+}
+
+const ADMIN_MASTER_HASH = "71694f2759e6eb1cf0cff131ae950a7c4ae655ae28a2a4fe354b5dfd9d5cbe98";
+const DB_KEY = 'ECO_PERMANENT_DATA_V7';
+
+let appData = {
+  adminMessage: "La resonancia de cada vínculo propaga la soberanía en la red cósmica.",
+  currentAdminRole: 'HADES',
+  users: []
+};
+
+function initDatabase() {
+  const sanctuary = getHourlyAdminSanctuary();
+  const saved = localStorage.getItem(DB_KEY);
+  
+  if (saved) {
+    try {
+      appData = JSON.parse(saved);
+      let admin = appData.users.find(u => u.isAdmin);
+      if (admin) {
+        admin.city = sanctuary.city;
+        admin.lat = sanctuary.lat;
+        admin.lon = sanctuary.lon;
+      } else {
+        appData.users.unshift({
+          username: appData.currentAdminRole === 'ZEUS' ? '@TheZeus' : '@TheHades',
+          gender: 'Dios',
+          city: sanctuary.city,
+          lat: sanctuary.lat,
+          lon: sanctuary.lon,
+          parent: null,
+          isAdmin: true,
+          deviceId: 'ROOT_ADMIN_DEVICE'
+        });
+      }
+    } catch(e) {
+      setupDefaultDatabase(sanctuary);
+    }
+  } else {
+    setupDefaultDatabase(sanctuary);
+  }
+  saveData();
+}
+
+function setupDefaultDatabase(sanctuary) {
+  appData = {
+    adminMessage: "La resonancia de cada vínculo propaga la soberanía en la red cósmica.",
+    currentAdminRole: 'HADES',
+    users: [
+      {
+        username: '@TheHades',
+        gender: 'Dios',
+        city: sanctuary.city,
+        lat: sanctuary.lat,
+        lon: sanctuary.lon,
+        parent: null,
+        isAdmin: true,
+        deviceId: 'ROOT_ADMIN_DEVICE'
+      }
+    ]
+  };
+}
+
+function saveData() {
+  localStorage.setItem(DB_KEY, JSON.stringify(appData));
+}
+
+let currentUser = null;
+let detectedLocation = null;
+let lastKnownAdminHour = Math.floor(Date.now() / 3600000);
+let pendingConfirmCallback = null;
+
+function getDeviceFingerprint() {
+  const canvas = document.createElement('canvas');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  let debugRenderer = '';
+  if (gl) {
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    debugRenderer = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : '';
+  }
+
+  const raw = [
+    navigator.userAgent,
+    navigator.hardwareConcurrency || 4,
+    screen.width + 'x' + screen.height,
+    screen.colorDepth,
+    Intl.DateTimeFormat().resolvedOptions().timeZone,
+    debugRenderer
+  ].join('###');
+
+  let hash = 5381;
+  for (let i = 0; i < raw.length; i++) {
+    hash = ((hash << 5) + hash) + raw.charCodeAt(i);
+    hash |= 0;
+  }
+  return 'HW_' + Math.abs(hash);
+}
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function isPasswordStrong(pwd) {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+  return regex.test(pwd);
+}
+
+function latLonToVector3(lat, lon, radius = EARTH_RADIUS) {
+  const phi = (90 - lat) * (Math.PI / 180);
+  const theta = (lon + 180) * (Math.PI / 180);
+  const x = -(radius * Math.sin(phi) * Math.cos(theta));
+  const z = (radius * Math.sin(phi) * Math.sin(theta));
+  const y = (radius * Math.cos(phi));
+  return new THREE.Vector3(x, y, z);
+}
+
+/* =========================================================
+   MOTOR THREE.JS
+   ========================================================= */
+let scene, camera, renderer, globeGroup;
+let ambientLight, sunLight;
+let earthMesh, atmosMesh;
+let nodeMeshes = new Map();
+let linkLines = [];
+let arrowMeshes = [];
+let energyPulses = [];
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+let isDragging = false;
+let autoRotate = true;
+let prevMouse = { x: 0, y: 0 };
+const GLOBAL_RADIUS = 75;
+let spherical = { radius: GLOBAL_RADIUS, theta: 0.4, phi: 1.2 };
+let targetLook = new THREE.Vector3(0, 0, 0);
+
+function applyGlobalView() {
+  targetLook.set(0, 0, 0);
+  spherical.radius = GLOBAL_RADIUS;
+  updateCameraPosition();
+}
+
+function init3D() {
+  const canvas = document.getElementById('map3d');
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x010206);
+  scene.fog = new THREE.FogExp2(0x010206, 0.008);
+
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  applyGlobalView();
+
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+  ambientLight = new THREE.AmbientLight(0x334466, 1.4);
+  scene.add(ambientLight);
+  sunLight = new THREE.DirectionalLight(0xffffff, 1.9);
+  sunLight.position.set(100, 80, 50);
+  scene.add(sunLight);
+
+  globeGroup = new THREE.Group();
+  scene.add(globeGroup);
+
+  buildEarth();
+  rebuildSceneNetwork();
+
+  window.addEventListener('mousedown', (e) => { isDragging = true; prevMouse = { x: e.clientX, y: e.clientY }; });
+  window.addEventListener('mousemove', onMouseMove);
+  window.addEventListener('mouseup', () => isDragging = false);
+
+  window.addEventListener('wheel', (e) => {
+    spherical.radius = Math.max(35, Math.min(150, spherical.radius + e.deltaY * 0.04));
+    updateCameraPosition();
+  });
+
+  let touchDist = 0;
+  window.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      isDragging = true;
+      prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    } else if (e.touches.length === 2) {
+      touchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
+  });
+
+  window.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 1 && isDragging) {
+      const dx = e.touches[0].clientX - prevMouse.x;
+      const dy = e.touches[0].clientY - prevMouse.y;
+      spherical.theta -= dx * 0.005;
+      spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi - dy * 0.005));
+      prevMouse = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      updateCameraPosition();
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+      spherical.radius = Math.max(35, Math.min(150, spherical.radius - (dist - touchDist) * 0.12));
+      touchDist = dist;
+      updateCameraPosition();
+    }
+  });
+
+  window.addEventListener('touchend', () => isDragging = false);
+  window.addEventListener('click', handleNodeClick);
+  window.addEventListener('resize', onResize);
+
+  animate();
+}
+
+function buildEarth() {
+  const loader = new THREE.TextureLoader();
+  const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+  const texture = loader.load('https://unpkg.com/three-globe/example/img/earth-night.jpg');
+  const earthMat = new THREE.MeshStandardMaterial({
+    map: texture,
+    roughness: 0.85,
+    metalness: 0.1
+  });
+  earthMesh = new THREE.Mesh(earthGeo, earthMat);
+  globeGroup.add(earthMesh);
+
+  const atmosGeo = new THREE.SphereGeometry(EARTH_RADIUS * 1.06, 48, 48);
+  const atmosMat = new THREE.MeshBasicMaterial({
+    color: 0x4ee7ff,
+    transparent: true,
+    opacity: 0.08,
+    side: THREE.BackSide
+  });
+  atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
+  globeGroup.add(atmosMesh);
+}
+
+function updateCameraPosition() {
+  camera.position.x = targetLook.x + spherical.radius * Math.sin(spherical.phi) * Math.sin(spherical.theta);
+  camera.position.y = targetLook.y + spherical.radius * Math.cos(spherical.phi);
+  camera.position.z = targetLook.z + spherical.radius * Math.sin(spherical.phi) * Math.cos(spherical.theta);
+  camera.lookAt(targetLook);
+}
+
+function onMouseMove(e) {
+  if (isDragging) {
+    const dx = e.clientX - prevMouse.x;
+    const dy = e.clientY - prevMouse.y;
+    spherical.theta -= dx * 0.005;
+    spherical.phi = Math.max(0.05, Math.min(Math.PI - 0.05, spherical.phi - dy * 0.005));
+    prevMouse = { x: e.clientX, y: e.clientY };
+    updateCameraPosition();
+  }
+}
+
+function apply3DTheme(isZeus) {
+  if (isZeus) {
+    scene.background = new THREE.Color(0x7ec8f8);
+    scene.fog.color.setHex(0x7ec8f8);
+    ambientLight.color.setHex(0xffffff);
+    ambientLight.intensity = 2.4;
+    sunLight.color.setHex(0xfff3d4);
+    atmosMesh.material.color.setHex(0xffd700);
+    atmosMesh.material.opacity = 0.3;
+  } else {
+    scene.background = new THREE.Color(0x010206);
+    scene.fog.color.setHex(0x010206);
+    ambientLight.color.setHex(0x334466);
+    ambientLight.intensity = 1.4;
+    sunLight.color.setHex(0xffffff);
+    atmosMesh.material.color.setHex(0x4ee7ff);
+    atmosMesh.material.opacity = 0.08;
+  }
+}
+
+function rebuildSceneNetwork() {
+  nodeMeshes.forEach(mesh => globeGroup.remove(mesh));
+  nodeMeshes.clear();
+  linkLines.forEach(l => globeGroup.remove(l));
+  linkLines = [];
+  arrowMeshes.forEach(a => globeGroup.remove(a));
+  arrowMeshes = [];
+  energyPulses.forEach(p => globeGroup.remove(p.mesh));
+  energyPulses = [];
+
+  const isZeusMode = appData.currentAdminRole === 'ZEUS';
+
+  const currentSanctuary = getHourlyAdminSanctuary();
+  const adminNode = appData.users.find(u => u.isAdmin);
+  if (adminNode) {
+    adminNode.city = currentSanctuary.city;
+    adminNode.lat = currentSanctuary.lat;
+    adminNode.lon = currentSanctuary.lon;
+  }
+
+  appData.users.forEach(u => {
+    const pos = latLonToVector3(u.lat, u.lon, EARTH_RADIUS + 0.3);
+    const group = new THREE.Group();
+
+    const isAdmin = u.isAdmin;
+    const isCurrent = currentUser && currentUser.username === u.username;
+
+    let dotColor, emissiveColor;
+
+    if (isAdmin) {
+      if (isZeusMode) {
+        dotColor = 0xffd700;
+        emissiveColor = 0xffaa00;
+      } else {
+        dotColor = 0x081226;
+        emissiveColor = 0x002244;
+      }
+    } else {
+      dotColor = isCurrent ? 0x10b981 : (isZeusMode ? 0xd97706 : 0x4ee7ff);
+      emissiveColor = dotColor;
+    }
+
+    const dotGeo = new THREE.SphereGeometry(isAdmin ? 1.1 : 0.65, 20, 20);
+    const dotMat = new THREE.MeshStandardMaterial({
+      color: dotColor,
+      emissive: emissiveColor,
+      emissiveIntensity: isAdmin ? 1.4 : 1.0,
+      roughness: 0.3,
+      metalness: 0.8
+    });
+    const sphere = new THREE.Mesh(dotGeo, dotMat);
+    group.add(sphere);
+
+    const haloGeo = new THREE.RingGeometry(isAdmin ? 1.35 : 0.85, isAdmin ? 1.8 : 1.15, 32);
+    const haloMat = new THREE.MeshBasicMaterial({
+      color: isAdmin ? (isZeusMode ? 0xffb703 : 0x1d3557) : dotColor,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: isAdmin ? 0.9 : 0.4
+    });
+    const halo = new THREE.Mesh(haloGeo, haloMat);
+    halo.lookAt(pos.clone().normalize());
+    group.add(halo);
+
+    group.position.copy(pos);
+    group.userData = { username: u.username };
+
+    globeGroup.add(group);
+    nodeMeshes.set(u.username, group);
+  });
+
+  appData.users.forEach(u => {
+    if (u.parent) {
+      const parentUser = appData.users.find(x => 
+        x.username.toLowerCase() === u.parent.toLowerCase() || 
+        (x.isAdmin && (u.parent.toLowerCase() === '@thehades' || u.parent.toLowerCase() === '@thezeus'))
+      );
+
+      if (parentUser) {
+        const vStart = latLonToVector3(u.lat, u.lon, EARTH_RADIUS + 0.3);
+        const vEnd = latLonToVector3(parentUser.lat, parentUser.lon, EARTH_RADIUS + 0.3);
+
+        const dist = vStart.distanceTo(vEnd);
+        const midPoint = vStart.clone().add(vEnd).multiplyScalar(0.5);
+        const altitude = EARTH_RADIUS + Math.max(1.8, dist * 0.22);
+        midPoint.normalize().multiplyScalar(altitude);
+
+        const curve = new THREE.QuadraticBezierCurve3(vStart, midPoint, vEnd);
+        const points = curve.getPoints(45);
+        const geom = new THREE.BufferGeometry().setFromPoints(points);
+        const lineMat = new THREE.LineBasicMaterial({
+          color: isZeusMode ? 0xd97706 : 0x00e5ff,
+          transparent: true,
+          opacity: 0.55
+        });
+        const line = new THREE.Line(geom, lineMat);
+        globeGroup.add(line);
+        linkLines.push(line);
+
+        const tNear = 0.94;
+        const arrowPos = curve.getPoint(tNear);
+        const tangent = curve.getTangent(tNear).normalize();
+        const coneGeo = new THREE.ConeGeometry(0.45, 1.3, 10);
+        const coneMat = new THREE.MeshBasicMaterial({ color: isZeusMode ? 0xb45309 : 0xffb84e });
+        const cone = new THREE.Mesh(coneGeo, coneMat);
+        cone.position.copy(arrowPos);
+        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent);
+        globeGroup.add(cone);
+        arrowMeshes.push(cone);
+
+        const pGeo = new THREE.SphereGeometry(0.25, 8, 8);
+        const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const pMesh = new THREE.Mesh(pGeo, pMat);
+        globeGroup.add(pMesh);
+        energyPulses.push({ curve, mesh: pMesh, progress: Math.random(), speed: 0.005 });
+      }
+    }
+  });
+}
+
+function checkAdminHourlyShift() {
+  const currentHour = Math.floor(Date.now() / 3600000);
+  if (currentHour !== lastKnownAdminHour) {
+    lastKnownAdminHour = currentHour;
+    const newLoc = getHourlyAdminSanctuary();
+    const admin = appData.users.find(u => u.isAdmin);
+    if (admin) {
+      admin.city = newLoc.city;
+      admin.lat = newLoc.lat;
+      admin.lon = newLoc.lon;
+      saveData();
+      rebuildSceneNetwork();
+      if (currentUser && currentUser.isAdmin) {
+        document.getElementById('hudCity').textContent = newLoc.city.split(',')[0];
+        updateInspectorCard(currentUser.username);
+        showToast(`Santuario trasladado a: ${newLoc.city.split(',')[0]}`);
+      }
+    }
+  }
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+
+  if (autoRotate && !isDragging) {
+    globeGroup.rotation.y += 0.0008;
+  }
+
+  energyPulses.forEach(p => {
+    p.progress += p.speed;
+    if (p.progress > 1) p.progress = 0;
+    p.mesh.position.copy(p.curve.getPoint(p.progress));
+  });
+
+  renderer.render(scene, camera);
+}
+
+function handleNodeClick(e) {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+  raycaster.setFromCamera(mouse, camera);
+
+  const meshes = Array.from(nodeMeshes.values()).map(g => g.children[0]);
+  const intersects = raycaster.intersectObjects(meshes);
+
+  if (intersects.length > 0) {
+    const uname = intersects[0].object.parent.userData.username;
+    updateInspectorCard(uname);
+  }
+}
+
+function updateInspectorCard(uname) {
+  const u = appData.users.find(x => x.username.toLowerCase() === uname.toLowerCase());
+  if (!u) return;
+
+  const refsCount = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+
+  document.getElementById('inspName').textContent = u.username;
+  document.getElementById('inspGender').textContent = u.isAdmin ? 'Dios' : (u.gender || 'No especificado');
+  document.getElementById('inspCity').textContent = u.city;
+  document.getElementById('inspCoords').textContent = `${u.lat.toFixed(4)}°, ${u.lon.toFixed(4)}°`;
+  document.getElementById('inspParent').textContent = u.parent || (u.isAdmin ? 'Soberano Absoluto' : 'Ninguno');
+  document.getElementById('inspRefs').textContent = refsCount;
+  document.getElementById('nodeInspector').style.display = 'block';
+}
+
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+/* =========================================================
+   GEOLOCALIZACIÓN
+   ========================================================= */
+async function getRealLocation() {
+  const badge = document.getElementById('geoBadge');
+  badge.className = 'geo-badge verifying';
+  badge.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Fijando satélites...';
+
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        await reverseGeocode(pos.coords.latitude, pos.coords.longitude);
+      },
+      async () => {
+        await fallbackIP();
+      },
+      { timeout: 7000, enableHighAccuracy: true }
+    );
+  } else {
+    await fallbackIP();
+  }
+}
+
+async function reverseGeocode(lat, lon) {
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10`);
+    const data = await res.json();
+    const city = data.address.city || data.address.town || data.address.municipality || data.address.state || 'Mérida';
+    const country = data.address.country || 'México';
+    lockPosition(`${city}, ${country}`, lat, lon);
+  } catch {
+    await fallbackIP();
+  }
+}
+
+async function fallbackIP() {
+  try {
+    const res = await fetch('https://ipapi.co/json/');
+    const data = await res.json();
+    lockPosition(`${data.city || 'Mérida'}, ${data.country_name || 'México'}`, data.latitude || 20.9674, data.longitude || -89.5926);
+  } catch {
+    lockPosition('Mérida, México', 20.9674, -89.5926);
+  }
+}
+
+function lockPosition(cityStr, lat, lon) {
+  detectedLocation = { city: cityStr, lat, lon };
+  const badge = document.getElementById('geoBadge');
+  const cityInput = document.getElementById('regCity');
+
+  cityInput.value = cityStr;
+  cityInput.readOnly = true;
+
+  badge.className = 'geo-badge locked';
+  badge.innerHTML = '<i class="fas fa-lock"></i> Posición Verificada';
+
+  checkRegisterValidity();
+}
+
+function checkRegisterValidity() {
+  const regBtn = document.getElementById('btnSubmitRegister');
+  const ageAccepted = document.getElementById('ageCheck').checked;
+  const termsAccepted = document.getElementById('termsCheck').checked;
+  const genderSelected = document.getElementById('regGender').value !== "";
+  const pwd = document.getElementById('regPassword').value;
+  const pwdValid = isPasswordStrong(pwd);
+  const hasLocation = detectedLocation !== null;
+
+  if (ageAccepted && termsAccepted && genderSelected && pwdValid && hasLocation) {
+    regBtn.disabled = false;
+    regBtn.textContent = 'Consagrar Registro';
+  } else {
+    regBtn.disabled = true;
+    if (!pwdValid && pwd.length > 0) regBtn.textContent = 'Contraseña débil (mín. 8, Mayús/Minús/Núm)';
+    else if (!genderSelected) regBtn.textContent = 'Selecciona tu género';
+    else if (!hasLocation) regBtn.textContent = 'Localizando satélites...';
+    else if (!ageAccepted) regBtn.textContent = 'Confirma mayoría de edad';
+    else regBtn.textContent = 'Acepta los términos';
+  }
+}
+
+/* =========================================================
+   TOP DE JUGADORES
+   ========================================================= */
+function updateLeaderboard() {
+  const container = document.getElementById('leaderboardList');
+  if (!container) return;
+
+  const mortals = appData.users.filter(u => !u.isAdmin);
+
+  const scored = mortals.map(u => {
+    const followers = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+    
+    let tierIndex = 0;
+    for (let i = TIERS.length - 1; i >= 0; i--) {
+      if (followers >= TIERS[i].minRefs) {
+        tierIndex = i;
+        break;
+      }
+    }
+    const currentTier = TIERS[tierIndex];
+    const nextTier = TIERS[tierIndex + 1];
+    const needed = nextTier ? (nextTier.minRefs - followers) : 0;
+
+    return {
+      username: u.username,
+      followers,
+      tier: currentTier.name,
+      level: currentTier.level,
+      needed,
+      isMax: !nextTier
+    };
+  });
+
+  scored.sort((a, b) => b.followers - a.followers);
+  const topPlayers = scored.slice(0, 5);
+
+  if (topPlayers.length === 0) {
+    container.innerHTML = '<p style="font-size:0.62rem; color:var(--muted); text-align:center;">Sin adeptos registrados aún.</p>';
+    return;
+  }
+
+  container.innerHTML = topPlayers.map(p => `
+    <div class="leader-item">
+      <div>
+        <span class="name">${p.username}</span>
+        <div style="font-size:0.58rem; color:var(--muted);">${p.followers} seguidores</div>
+      </div>
+      <div class="tier-info">
+        <div><span>Nv.${p.level}</span> ${p.tier}</div>
+        <div>${p.isMax ? 'Máximo Rango' : `Faltan <span>${p.needed}</span> refs`}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+/* =========================================================
+   SISTEMA DE CONFIRMACIÓN Y GESTIÓN DE USUARIOS
+   ========================================================= */
+function openConfirmModal(title, msg, onConfirm) {
+  document.getElementById('confirmTitle').innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${title}`;
+  document.getElementById('confirmMsg').textContent = msg;
+  pendingConfirmCallback = onConfirm;
+  document.getElementById('confirmOverlay').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+  document.getElementById('confirmOverlay').classList.add('hidden');
+  pendingConfirmCallback = null;
+}
+
+function openUserDeleteModal() {
+  const container = document.getElementById('userDeleteContainer');
+  const mortals = appData.users.filter(u => !u.isAdmin);
+
+  if (mortals.length === 0) {
+    container.innerHTML = '<p style="font-size:0.75rem; color:var(--muted); padding:10px;">No hay mortales registrados en la red.</p>';
+  } else {
+    container.innerHTML = mortals.map(u => `
+      <div class="user-delete-item">
+        <span>${u.username}</span>
+        <button onclick="window.requestDeleteUser('${u.username}')"><i class="fas fa-trash"></i> Purgar</button>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('deleteUserOverlay').classList.remove('hidden');
+}
+
+window.requestDeleteUser = function(targetUsername) {
+  document.getElementById('deleteUserOverlay').classList.add('hidden');
+  openConfirmModal(
+    'PURGAR NODO',
+    `¿Deseas desterrar irrevocablemente a ${targetUsername}? Esta acción se guardará de forma permanente y sus referidos se reasignarán a ti.`,
+    () => executeDeleteUser(targetUsername)
+  );
+};
+
+function executeDeleteUser(targetUsername) {
+  const admin = appData.users.find(u => u.isAdmin);
+  const adminName = admin ? admin.username : '@TheHades';
+
+  appData.users.forEach(u => {
+    if (u.parent && u.parent.toLowerCase() === targetUsername.toLowerCase()) {
+      u.parent = adminName;
+    }
+  });
+
+  appData.users = appData.users.filter(u => u.username.toLowerCase() !== targetUsername.toLowerCase());
+  saveData();
+
+  rebuildSceneNetwork();
+  updateLeaderboard();
+  applyGlobalView();
+  showToast(`Nodo ${targetUsername} purgado permanentemente.`);
+}
+
+function executeResetNetwork() {
+  const admin = appData.users.find(u => u.isAdmin);
+  appData.users = admin ? [admin] : [{
+    username: '@TheHades',
+    gender: 'Dios',
+    city: getHourlyAdminSanctuary().city,
+    lat: getHourlyAdminSanctuary().lat,
+    lon: getHourlyAdminSanctuary().lon,
+    parent: null,
+    isAdmin: true,
+    deviceId: 'ROOT_ADMIN_DEVICE'
+  }];
+
+  saveData();
+  localStorage.removeItem('ECO_BOUND_USER');
+
+  rebuildSceneNetwork();
+  updateLeaderboard();
+  applyGlobalView();
+  showToast('Red reiniciada de forma definitiva.');
+}
+
+/* =========================================================
+   UI Y CONTROL DE EVENTOS
+   ========================================================= */
+function setupUI() {
+  const regUser = document.getElementById('regUsername');
+  const regPass = document.getElementById('regPassword');
+  const regRef = document.getElementById('regReferral');
+  const loginUser = document.getElementById('loginUsername');
+  const loginPass = document.getElementById('loginPassword');
+  const regGender = document.getElementById('regGender');
+
+  // FILTRADO ESTRICTO DE ESPACIOS Y FORZADO DE PREFIJO @
+  function cleanNoSpacesAndEnforceAt(input) {
+    input.addEventListener('input', () => {
+      let val = input.value.replace(/\s+/g, '');
+      if (val.length > 0 && !val.startsWith('@')) {
+        val = '@' + val.replace(/@/g, '');
+      }
+      input.value = val;
+    });
+  }
+
+  cleanNoSpacesAndEnforceAt(regUser);
+  cleanNoSpacesAndEnforceAt(loginUser);
+
+  regRef.addEventListener('input', () => {
+    let val = regRef.value.replace(/\s+/g, '');
+    if (val.length > 0 && !val.startsWith('@')) {
+      val = '@' + val.replace(/@/g, '');
+    }
+    regRef.value = val;
+  });
+
+  regPass.addEventListener('input', checkRegisterValidity);
+  regGender.addEventListener('change', checkRegisterValidity);
+
+  loginPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleLogin();
+    }
+  });
+  loginUser.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      loginPass.focus();
+    }
+  });
+
+  regPass.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const regBtn = document.getElementById('btnSubmitRegister');
+      if (!regBtn.disabled) {
+        handleRegister();
+      } else {
+        showToast('Verifica requisitos de contraseña y datos');
+      }
+    }
+  });
+
+  document.getElementById('linkGoRegister').addEventListener('click', () => {
+    const deviceId = getDeviceFingerprint();
+    const hasAccount = localStorage.getItem('ECO_BOUND_USER') || appData.users.some(u => u.deviceId === deviceId && !u.isAdmin);
+    if (hasAccount) {
+      showToast('❌ Este dispositivo ya tiene un nodo consagrado');
+      return;
+    }
+    document.getElementById('formLogin').style.display = 'none';
+    document.getElementById('formRegister').style.display = 'block';
+    getRealLocation();
+  });
+
+  document.getElementById('linkGoLogin').addEventListener('click', () => {
+    document.getElementById('formRegister').style.display = 'none';
+    document.getElementById('formLogin').style.display = 'block';
+  });
+
+  const termsAcc = document.getElementById('termsAccordion');
+  document.getElementById('termsHeader').addEventListener('click', () => {
+    termsAcc.classList.toggle('open');
+    document.getElementById('termsIcon').className = termsAcc.classList.contains('open') ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+  });
+
+  document.getElementById('ageCheck').addEventListener('change', checkRegisterValidity);
+  document.getElementById('termsCheck').addEventListener('change', checkRegisterValidity);
+
+  document.getElementById('btnSubmitLogin').addEventListener('click', handleLogin);
+  document.getElementById('btnSubmitRegister').addEventListener('click', handleRegister);
+
+  document.getElementById('chooseHades').addEventListener('click', () => {
+    selectAdminRole('HADES');
+  });
+  document.getElementById('chooseZeus').addEventListener('click', () => {
+    selectAdminRole('ZEUS');
+  });
+
+  const gearBtn = document.getElementById('btnAdminGear');
+  const gearMenu = document.getElementById('adminGearMenu');
+  const gearProfileSelect = document.getElementById('gearProfileSelect');
+  const gearActionSelect = document.getElementById('gearActionSelect');
+
+  gearBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    gearMenu.classList.toggle('open');
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!gearMenu.contains(e.target) && e.target !== gearBtn) {
+      gearMenu.classList.remove('open');
+    }
+  });
+
+  gearProfileSelect.addEventListener('change', () => {
+    const role = gearProfileSelect.value;
+    selectAdminRole(role);
+    gearMenu.classList.remove('open');
+  });
+
+  gearActionSelect.addEventListener('change', () => {
+    const action = gearActionSelect.value;
+    gearActionSelect.value = '';
+    gearMenu.classList.remove('open');
+
+    if (action === 'DELETE') {
+      openUserDeleteModal();
+    } else if (action === 'RESET') {
+      openConfirmModal(
+        'RESETEO PERMANENTE',
+        '¿Estás a punto de aniquilar a todos los usuarios de la red cósmica? Esta acción se guardará y no se revertirá al recargar.',
+        () => executeResetNetwork()
+      );
+    }
+  });
+
+  document.getElementById('btnCancelDeleteUser').addEventListener('click', () => {
+    document.getElementById('deleteUserOverlay').classList.add('hidden');
+  });
+
+  document.getElementById('btnCancelConfirm').addEventListener('click', closeConfirmModal);
+  document.getElementById('btnAcceptConfirm').addEventListener('click', () => {
+    if (pendingConfirmCallback) {
+      pendingConfirmCallback();
+    }
+    closeConfirmModal();
+  });
+
+  document.getElementById('adminMsgDisplay').textContent = `"${appData.adminMessage}"`;
+  document.getElementById('btnEditAdminMsg').addEventListener('click', () => {
+    const editor = document.getElementById('adminEditor');
+    editor.style.display = editor.style.display === 'none' ? 'block' : 'none';
+    document.getElementById('adminInput').value = appData.adminMessage;
+  });
+
+  document.getElementById('btnSaveAdminMsg').addEventListener('click', () => {
+    const newMsg = document.getElementById('adminInput').value.trim();
+    if (!newMsg) return;
+    appData.adminMessage = newMsg;
+    saveData();
+    document.getElementById('adminMsgDisplay').textContent = `"${newMsg}"`;
+    document.getElementById('adminEditor').style.display = 'none';
+    showToast('Mandato soberano promulgado');
+  });
+
+  document.getElementById('btnRecenter').addEventListener('click', () => {
+    applyGlobalView();
+    showToast('Vista Global Establecida');
+  });
+
+  document.getElementById('btnRotateToggle').addEventListener('click', () => {
+    autoRotate = !autoRotate;
+    showToast(autoRotate ? 'Rotación Reanudada' : 'Rotación Detenida');
+  });
+
+  document.getElementById('btnLogout').addEventListener('click', () => {
+    currentUser = null;
+
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('regUsername').value = '';
+    document.getElementById('regPassword').value = '';
+    document.getElementById('regReferral').value = '';
+    document.getElementById('regGender').value = '';
+    document.getElementById('ageCheck').checked = false;
+    document.getElementById('termsCheck').checked = false;
+
+    document.getElementById('hud').classList.add('hidden');
+    document.getElementById('hudActions').classList.add('hidden');
+    document.getElementById('adminBoard').classList.add('hidden');
+    document.getElementById('adminGearContainer').style.display = 'none';
+    document.getElementById('leaderboardCard').style.display = 'none';
+    document.getElementById('nodeInspector').style.display = 'none';
+    document.getElementById('deleteUserOverlay').classList.add('hidden');
+    document.getElementById('confirmOverlay').classList.add('hidden');
+    document.getElementById('authOverlay').classList.remove('hidden');
+    document.getElementById('formRegister').style.display = 'none';
+    document.getElementById('formLogin').style.display = 'block';
+
+    applyGlobalView();
+    rebuildSceneNetwork();
+  });
+
+  document.getElementById('closeInsp').addEventListener('click', () => {
+    document.getElementById('nodeInspector').style.display = 'none';
+  });
+
+  setInterval(checkAdminHourlyShift, 30000);
+}
+
+async function handleLogin() {
+  const usernameInput = document.getElementById('loginUsername').value.replace(/\s+/g, '');
+  const password = document.getElementById('loginPassword').value;
+
+  const pwdHash = await sha256(password);
+  const isMasterKey = (pwdHash === ADMIN_MASTER_HASH);
+  const isAdminName = (usernameInput.toLowerCase() === '@thehades' || usernameInput.toLowerCase() === '@thezeus' || usernameInput.toLowerCase() === '@admin');
+
+  if (isMasterKey || (isAdminName && password === 'TheBxtmxn')) {
+    document.getElementById('authOverlay').classList.add('hidden');
+    document.getElementById('adminChoiceOverlay').classList.remove('hidden');
+    return;
+  }
+
+  const user = appData.users.find(u => u.username.toLowerCase() === usernameInput.toLowerCase() && !u.isAdmin);
+  if (!user || user.password !== password) {
+    showToast('Credenciales incorrectas');
+    return;
+  }
+
+  activateSession(user);
+  showToast(`Conectado al nodo: ${user.username}`);
+}
+
+function selectAdminRole(role) {
+  appData.currentAdminRole = role;
+
+  const isZeus = (role === 'ZEUS');
+  const adminName = isZeus ? '@TheZeus' : '@TheHades';
+
+  const rootNode = appData.users.find(u => u.isAdmin);
+  if (rootNode) {
+    rootNode.username = adminName;
+    rootNode.gender = 'Dios';
+  }
+
+  saveData();
+
+  document.body.className = isZeus ? 'theme-zeus' : '';
+  apply3DTheme(isZeus);
+
+  document.getElementById('gearProfileSelect').value = role;
+
+  currentUser = rootNode;
+  rebuildSceneNetwork();
+
+  document.getElementById('adminChoiceOverlay').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  document.getElementById('hudActions').classList.remove('hidden');
+  document.getElementById('adminBoard').classList.remove('hidden');
+
+  document.getElementById('adminGearContainer').style.display = 'block';
+  document.getElementById('leaderboardCard').style.display = 'none';
+
+  document.getElementById('adminBoardHeader').innerHTML = isZeus 
+    ? '<i class="fas fa-bolt" style="color:#d97706;"></i> Mandato de TheZeus'
+    : '<i class="fas fa-crown" style="color:#4ee7ff;"></i> Mandato de TheHades';
+
+  document.getElementById('btnEditAdminMsg').style.display = 'inline-block';
+
+  const myRefs = appData.users.filter(x => x.parent && (x.parent.toLowerCase() === '@thehades' || x.parent.toLowerCase() === '@thezeus')).length;
+  document.getElementById('hudUser').textContent = adminName;
+  document.getElementById('hudCity').textContent = rootNode.city.split(',')[0];
+  document.getElementById('hudRefs').textContent = myRefs;
+  document.getElementById('hudParent').textContent = 'Soberano Supremo';
+
+  applyGlobalView();
+
+  updateInspectorCard(adminName);
+  showToast(isZeus ? '⚡ Modo Zeus: Fondo Azul Cielo' : '🌑 Modo Hades: Abismo Puro');
+}
+
+function handleRegister() {
+  const deviceId = getDeviceFingerprint();
+
+  const hardwareDuplicate = appData.users.some(u => u.deviceId === deviceId && !u.isAdmin);
+  if (hardwareDuplicate) {
+    showToast('❌ Este dispositivo ya alcanzó el límite de 1 cuenta');
+    return;
+  }
+
+  if (localStorage.getItem('ECO_BOUND_USER')) {
+    showToast('❌ Este navegador ya posee un nodo consagrado');
+    return;
+  }
+
+  const username = document.getElementById('regUsername').value.replace(/\s+/g, '');
+  const password = document.getElementById('regPassword').value;
+  const gender = document.getElementById('regGender').value;
+  let referralInput = document.getElementById('regReferral').value.replace(/\s+/g, '').toLowerCase();
+
+  if (/\s/.test(username)) {
+    showToast('El usuario no puede contener espacios');
+    return;
+  }
+  if (!gender) {
+    showToast('Debes seleccionar un género');
+    return;
+  }
+  if (username === '@' || username.length < 3) {
+    showToast('Ingresa un usuario válido');
+    return;
+  }
+  if (!isPasswordStrong(password)) {
+    showToast('Contraseña inválida: mín. 8 caracteres, mayúscula, minúscula y número');
+    return;
+  }
+
+  if (username.toLowerCase() === '@thehades' || username.toLowerCase() === '@thezeus' || username.toLowerCase() === '@admin') {
+    showToast('Identificador reservado para la Deidad');
+    return;
+  }
+
+  if (appData.users.some(u => u.username.toLowerCase() === username.toLowerCase())) {
+    showToast('Ese @usuario ya está consagrado');
+    return;
+  }
+
+  let parentName = '@TheHades';
+  if (referralInput && referralInput !== '@') {
+    const pNode = appData.users.find(u => u.username.toLowerCase() === referralInput);
+    if (pNode) parentName = pNode.username;
+  }
+
+  const newUser = {
+    username,
+    password,
+    gender,
+    city: detectedLocation.city,
+    lat: detectedLocation.lat + (Math.random() - 0.5) * 0.04,
+    lon: detectedLocation.lon + (Math.random() - 0.5) * 0.04,
+    parent: parentName,
+    isAdmin: false,
+    deviceId: deviceId
+  };
+
+  appData.users.push(newUser);
+  saveData();
+
+  localStorage.setItem('ECO_BOUND_USER', username);
+
+  activateSession(newUser);
+  showToast('¡Nodo consagrado y guardado permanentemente!');
+}
+
+function activateSession(user) {
+  currentUser = user;
+  rebuildSceneNetwork();
+
+  document.getElementById('authOverlay').classList.add('hidden');
+  document.getElementById('hud').classList.remove('hidden');
+  document.getElementById('hudActions').classList.remove('hidden');
+  document.getElementById('adminBoard').classList.remove('hidden');
+
+  document.getElementById('adminGearContainer').style.display = 'none';
+  document.getElementById('btnEditAdminMsg').style.display = 'none';
+
+  document.getElementById('leaderboardCard').style.display = 'block';
+  updateLeaderboard();
+
+  const myRefs = appData.users.filter(x => x.parent && x.parent.toLowerCase() === user.username.toLowerCase()).length;
+  document.getElementById('hudUser').textContent = user.username;
+  document.getElementById('hudCity').textContent = user.city.split(',')[0];
+  document.getElementById('hudRefs').textContent = myRefs;
+  document.getElementById('hudParent').textContent = user.parent || 'Nodo Raíz';
+
+  applyGlobalView();
+
+  updateInspectorCard(user.username);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  initDatabase();
+  init3D();
+  setupUI();
+});
+
+})();
+</script>
+</body>
+</html>
