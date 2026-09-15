@@ -260,67 +260,113 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
 }
 .hud.hidden { opacity: 0; }
 
+/* HUD SUPERIOR: DISPOSICIÓN HORIZONTAL COMPACTA */
 .hud-top {
-  display: flex; justify-content: center; align-items: center; gap: 8px;
-  padding: calc(8px + var(--safe-top)) 12px 8px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: calc(6px + var(--safe-top)) 10px 4px;
   background: linear-gradient(to bottom, var(--panel-bg), transparent);
-  pointer-events: auto; flex-wrap: wrap;
+  pointer-events: auto;
 }
 
 .stat-card {
   background: var(--panel-bg);
   border: 1px solid var(--border);
-  padding: 5px 10px; min-width: 74px;
-  display: flex; flex-direction: column; align-items: center;
+  padding: 4px 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
   backdrop-filter: blur(8px);
   border-radius: 4px;
+  min-width: 0;
 }
-.stat-card .label { font-size: 0.46rem; letter-spacing: 0.16em; color: var(--muted); text-transform: uppercase; }
-.stat-card .val { font-family: 'Cinzel', serif; font-size: 0.92rem; color: var(--primary); font-weight: 700; }
+.stat-card .label {
+  font-size: 0.44rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.stat-card .val {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  color: var(--primary);
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
 
+/* BARRA DE ACCIONES INFERIOR FIJA */
 .hud-actions {
-  position: fixed; bottom: calc(14px + var(--safe-bottom));
-  left: 50%; transform: translateX(-50%);
-  display: flex; gap: 6px; pointer-events: auto; z-index: 60;
-  width: max-content; max-width: 96vw; flex-wrap: wrap; justify-content: center;
+  position: fixed;
+  bottom: calc(8px + var(--safe-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+  z-index: 60;
+  width: calc(100% - 24px);
+  max-width: 440px;
 }
 .btn-action {
+  flex: 1;
   background: var(--panel-bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 8px 14px;
-  font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
-  cursor: pointer; display: flex; align-items: center; gap: 6px;
+  padding: 8px 6px;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   backdrop-filter: blur(8px);
-  border-radius: 4px; transition: all .3s;
+  border-radius: 4px;
+  transition: all .3s;
+  white-space: nowrap;
 }
 .btn-action:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
 
+/* ENGRANAJE DE ADMIN */
 .admin-gear-container {
-  position: fixed; top: calc(10px + var(--safe-top)); right: 12px;
-  z-index: 65; pointer-events: auto; display: none;
+  position: fixed;
+  top: calc(56px + var(--safe-top));
+  right: 10px;
+  z-index: 65;
+  pointer-events: auto;
+  display: none;
 }
 .btn-gear {
-  width: 38px; height: 38px;
+  width: 36px; height: 36px;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   color: var(--primary);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 1rem;
+  cursor: pointer; font-size: 0.95rem;
   box-shadow: 0 0 15px var(--primary-glow);
   transition: transform .4s ease;
 }
 .btn-gear:hover { transform: rotate(90deg); }
 .admin-gear-menu {
-  position: absolute; top: 46px; right: 0;
+  position: absolute; top: 42px; right: 0;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   border-radius: 6px; padding: 10px;
-  display: flex; flex-direction: column; gap: 10px;
+  display: flex; flex-direction: column; gap: 8px;
   box-shadow: 0 0 35px rgba(0,0,0,0.9);
   opacity: 0; pointer-events: none; transform: translateY(-8px);
-  transition: all .3s ease; width: 200px;
+  transition: all .3s ease; width: 190px;
 }
 .admin-gear-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .gear-section {
@@ -339,70 +385,103 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
 .gear-select option { background: #070e1a; color: #fff; }
 body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 
+/* TABLÓN DEL ADMINISTRADOR DESPLEGABLE */
 .admin-board {
   position: fixed;
-  top: calc(64px + var(--safe-top)); left: 12px;
-  width: 290px; max-width: calc(100vw - 24px);
+  top: calc(56px + var(--safe-top));
+  left: 10px;
+  width: 280px;
+  max-width: calc(100vw - 64px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
-  box-shadow: 0 0 30px rgba(0,0,0,0.85);
-  padding: 12px; z-index: 55; pointer-events: auto;
+  box-shadow: 0 0 25px rgba(0,0,0,0.85);
+  padding: 10px 12px;
+  z-index: 55;
+  pointer-events: auto;
   border-radius: 6px;
+  transition: all 0.3s ease;
 }
 .admin-board-title {
-  font-family: 'Cinzel'; font-size: 0.8rem; color: var(--primary);
-  letter-spacing: 0.16em; display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+  font-family: 'Cinzel'; font-size: 0.76rem; color: var(--primary);
+  letter-spacing: 0.14em; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 5px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+  cursor: pointer;
 }
+.admin-board-title .toggle-icon { font-size: 0.65rem; transition: transform 0.3s; }
+.admin-board.collapsed .admin-board-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.admin-board.collapsed .admin-board-body { display: none; }
+.admin-board.collapsed .toggle-icon { transform: rotate(-90deg); }
 .admin-board-msg {
-  font-size: 0.7rem; color: var(--text); line-height: 1.4; font-style: italic;
+  font-size: 0.68rem; color: var(--text); line-height: 1.35; font-style: italic;
+  max-height: 80px; overflow-y: auto;
 }
-.admin-board-editor { display: none; margin-top: 8px; }
+.admin-board-editor { display: none; margin-top: 6px; }
 .admin-board-editor textarea {
   width: 100%; background: var(--card-bg);
   border: 1px solid var(--border); color: var(--text);
-  font-family: inherit; font-size: 0.72rem; padding: 6px; resize: vertical;
-  outline: none; height: 60px; border-radius: 3px;
+  font-family: inherit; font-size: 0.7rem; padding: 6px; resize: vertical;
+  outline: none; height: 50px; border-radius: 3px;
 }
 
+/* TABLÓN DE LÍDERES (TOP JUGADORES) DESPLEGABLE */
 .leaderboard-card {
   position: fixed;
-  left: 12px; bottom: calc(65px + var(--safe-bottom));
-  width: 270px; max-width: calc(100vw - 24px);
+  left: 10px;
+  bottom: calc(52px + var(--safe-bottom));
+  width: 250px;
+  max-width: calc(100vw - 20px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
-  box-shadow: 0 0 30px rgba(0,0,0,0.85);
-  padding: 10px; z-index: 55; pointer-events: auto;
-  border-radius: 6px; display: none;
+  box-shadow: 0 0 25px rgba(0,0,0,0.85);
+  padding: 8px 10px;
+  z-index: 55;
+  pointer-events: auto;
+  border-radius: 6px;
+  display: none;
+  transition: all 0.3s ease;
 }
 .leaderboard-title {
-  font-family: 'Cinzel'; font-size: 0.75rem; color: var(--primary);
-  letter-spacing: 0.15em; display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+  font-family: 'Cinzel'; font-size: 0.72rem; color: var(--primary);
+  letter-spacing: 0.12em; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 3px;
+  cursor: pointer;
 }
+.leaderboard-title .toggle-icon { font-size: 0.62rem; transition: transform 0.3s; }
+.leaderboard-card.collapsed .leaderboard-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
+.leaderboard-card.collapsed #leaderboardList { display: none; }
+.leaderboard-card.collapsed .toggle-icon { transform: rotate(180deg); }
+#leaderboardList { max-height: 130px; overflow-y: auto; }
 .leader-item {
   display: flex; justify-content: space-between; align-items: center;
-  padding: 4px 6px; margin-bottom: 4px;
+  padding: 3px 5px; margin-bottom: 3px;
   background: var(--card-bg); border-left: 2px solid var(--primary);
-  font-size: 0.63rem; border-radius: 2px;
+  font-size: 0.6rem; border-radius: 2px;
 }
 .leader-item .name { font-weight: 700; color: var(--text); }
-.leader-item .tier-info { text-align: right; color: var(--muted); font-size: 0.56rem; }
+.leader-item .tier-info { text-align: right; color: var(--muted); font-size: 0.54rem; }
 .leader-item .tier-info span { color: var(--primary); font-weight: 600; }
 
+/* INSPECTOR DE NODOS */
 .inspector-card {
-  position: fixed; right: 12px; bottom: calc(65px + var(--safe-bottom));
-  width: 260px; max-width: calc(100vw - 24px);
+  position: fixed;
+  right: 10px;
+  bottom: calc(52px + var(--safe-bottom));
+  width: 250px;
+  max-width: calc(100vw - 20px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   box-shadow: 0 0 30px rgba(0,0,0,0.85);
-  padding: 12px; z-index: 70; pointer-events: auto; display: none;
+  padding: 10px 12px;
+  z-index: 70;
+  pointer-events: auto;
+  display: none;
   border-radius: 6px;
 }
-.inspector-card h4 { font-family: 'Cinzel'; color: var(--primary); letter-spacing: 0.15em; font-size: 0.88rem; }
-.inspector-card p { font-size: 0.66rem; color: var(--muted); margin-top: 3px; }
+.inspector-card h4 { font-family: 'Cinzel'; color: var(--primary); letter-spacing: 0.14em; font-size: 0.84rem; }
+.inspector-card p { font-size: 0.64rem; color: var(--muted); margin-top: 3px; }
 .inspector-card span { color: var(--text); font-weight: 600; }
 
+/* MODALES DE GESTIÓN Y CONFIRMACIÓN ADMIN */
 .admin-modal-box {
   width: 100%; max-width: 380px;
   background: var(--panel-bg);
@@ -460,28 +539,45 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-@media (max-width: 600px) {
-  .choice-cards { flex-direction: column; gap: 8px; }
-  .choice-card { padding: 12px 8px; }
-  .stat-card { min-width: 64px; padding: 4px 6px; }
-  .stat-card .val { font-size: 0.82rem; }
-  .hud-actions { bottom: calc(10px + var(--safe-bottom)); gap: 4px; }
-  .btn-action { padding: 6px 10px; font-size: 0.6rem; }
-  .leaderboard-card { width: calc(100vw - 24px); bottom: calc(56px + var(--safe-bottom)); max-height: 160px; overflow-y: auto; }
-  .inspector-card { width: calc(100vw - 24px); right: 12px; bottom: calc(56px + var(--safe-bottom)); }
-}
-
-@media (min-width: 601px) and (max-width: 1024px) {
-  .panel { max-width: 420px; }
-  .admin-board { width: 300px; }
-  .leaderboard-card { bottom: calc(20px + var(--safe-bottom)); left: 16px; }
-}
-
-@media (min-width: 1025px) {
-  .panel { max-width: 460px; }
-  .admin-board { width: 320px; left: 20px; }
-  .leaderboard-card { left: 20px; bottom: calc(20px + var(--safe-bottom)); width: 290px; }
-  .inspector-card { right: 20px; bottom: calc(20px + var(--safe-bottom)); width: 280px; }
+/* AJUSTES PARA PANTALLAS GRANDES Y TABLETS */
+@media (min-width: 601px) {
+  .hud-top {
+    padding: calc(10px + var(--safe-top)) 16px 8px;
+    gap: 12px;
+  }
+  .stat-card {
+    padding: 6px 10px;
+  }
+  .stat-card .val {
+    font-size: 0.95rem;
+  }
+  .admin-board {
+    width: 310px;
+    left: 16px;
+    top: calc(70px + var(--safe-top));
+  }
+  .admin-gear-container {
+    top: calc(14px + var(--safe-top));
+    right: 16px;
+  }
+  .leaderboard-card {
+    left: 16px;
+    bottom: calc(64px + var(--safe-bottom));
+    width: 280px;
+  }
+  .inspector-card {
+    right: 16px;
+    bottom: calc(64px + var(--safe-bottom));
+    width: 270px;
+  }
+  .hud-actions {
+    bottom: calc(16px + var(--safe-bottom));
+    gap: 10px;
+  }
+  .btn-action {
+    padding: 9px 16px;
+    font-size: 0.7rem;
+  }
 }
 </style>
 </head>
@@ -672,26 +768,29 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
   </div>
 </div>
 
-<!-- TABLÓN OFICIAL DEL ADMINISTRADOR -->
+<!-- TABLÓN OFICIAL DEL ADMINISTRADOR CON REPLIEGUE -->
 <div id="adminBoard" class="admin-board hidden">
-  <div class="admin-board-title">
+  <div class="admin-board-title" id="adminBoardToggle">
     <span id="adminBoardHeader"><i class="fas fa-crown"></i> Mandato Soberano</span>
-    <button id="btnEditAdminMsg" style="display:none; background:transparent; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem;"><i class="fas fa-edit"></i></button>
+    <i class="fas fa-chevron-down toggle-icon"></i>
+    <button id="btnEditAdminMsg" style="display:none; background:transparent; border:none; color:var(--primary); cursor:pointer; font-size:0.75rem; margin-left:6px;"><i class="fas fa-edit"></i></button>
   </div>
-  <div class="admin-board-msg" id="adminMsgDisplay">
-    "La red converge en el equilibrio universal."
-  </div>
-  <div class="admin-board-editor" id="adminEditor">
-    <textarea id="adminInput" placeholder="Escribe el nuevo mandato oficial..."></textarea>
-    <button class="btn-primary" id="btnSaveAdminMsg" style="padding:6px; font-size:0.65rem; margin-top:4px;">Decretar Mandato</button>
+  <div class="admin-board-body">
+    <div class="admin-board-msg" id="adminMsgDisplay">
+      "La red converge en el equilibrio universal."
+    </div>
+    <div class="admin-board-editor" id="adminEditor">
+      <textarea id="adminInput" placeholder="Escribe el nuevo mandato oficial..."></textarea>
+      <button class="btn-primary" id="btnSaveAdminMsg" style="padding:6px; font-size:0.65rem; margin-top:4px;">Decretar Mandato</button>
+    </div>
   </div>
 </div>
 
-<!-- CUADRO TOP DE JUGADORES (SOLO USUARIOS REGULARES) -->
+<!-- CUADRO TOP DE JUGADORES (SOLO USUARIOS REGULARES) CON REPLIEGUE -->
 <div id="leaderboardCard" class="leaderboard-card">
-  <div class="leaderboard-title">
+  <div class="leaderboard-title" id="leaderboardToggle">
     <span><i class="fas fa-trophy" style="color:#ffb84e;"></i> LÍDERES DE RED</span>
-    <span style="font-size:0.55rem; color:var(--muted);">TOP ASCENSIÓN</span>
+    <i class="fas fa-chevron-up toggle-icon"></i>
   </div>
   <div id="leaderboardList"></div>
 </div>
@@ -1043,22 +1142,49 @@ function apply3DTheme(isZeus) {
 function rebuildSceneNetwork() {
   nodeMeshes.forEach(mesh => globeGroup.remove(mesh));
   nodeMeshes.clear();
-  linkLines.forEach(l => globeGroup.remove(l));
+  linkLines.forEach(l => {
+    globeGroup.remove(l);
+    if (l.geometry) l.geometry.dispose();
+    if (l.material) l.material.dispose();
+  });
   linkLines = [];
-  arrowMeshes.forEach(a => globeGroup.remove(a));
+  arrowMeshes.forEach(a => {
+    globeGroup.remove(a);
+    if (a.geometry) a.geometry.dispose();
+    if (a.material) a.material.dispose();
+  });
   arrowMeshes = [];
-  energyPulses.forEach(p => globeGroup.remove(p.mesh));
+  energyPulses.forEach(p => {
+    globeGroup.remove(p.mesh);
+    if (p.mesh.geometry) p.mesh.geometry.dispose();
+    if (p.mesh.material) p.mesh.material.dispose();
+  });
   energyPulses = [];
 
   const isZeusMode = appData.currentAdminRole === 'ZEUS';
 
   const currentSanctuary = getHourlyAdminSanctuary();
-  const adminNode = appData.users.find(u => u.isAdmin);
-  if (adminNode) {
+  let adminNode = appData.users.find(u => u.isAdmin);
+  if (!adminNode) {
+    adminNode = {
+      username: isZeusMode ? '@TheZeus' : '@TheHades',
+      gender: 'Dios',
+      city: currentSanctuary.city,
+      lat: currentSanctuary.lat,
+      lon: currentSanctuary.lon,
+      parent: null,
+      isAdmin: true,
+      deviceId: 'ROOT_ADMIN_DEVICE'
+    };
+    appData.users.unshift(adminNode);
+  } else {
     adminNode.city = currentSanctuary.city;
     adminNode.lat = currentSanctuary.lat;
     adminNode.lon = currentSanctuary.lon;
+    adminNode.username = isZeusMode ? '@TheZeus' : '@TheHades';
   }
+
+  const ADMIN_NODE_RADIUS = 1.1;
 
   appData.users.forEach(u => {
     const pos = latLonToVector3(u.lat, u.lon, EARTH_RADIUS + 0.3);
@@ -1068,6 +1194,9 @@ function rebuildSceneNetwork() {
     const isCurrent = currentUser && currentUser.username === u.username;
 
     let dotColor, emissiveColor;
+    let nodeRadius = ADMIN_NODE_RADIUS;
+    let ringInner = 1.35;
+    let ringOuter = 1.8;
 
     if (isAdmin) {
       if (isZeusMode) {
@@ -1080,9 +1209,26 @@ function rebuildSceneNetwork() {
     } else {
       dotColor = isCurrent ? 0x10b981 : (isZeusMode ? 0xd97706 : 0x4ee7ff);
       emissiveColor = dotColor;
+
+      const followers = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+      let tierIndex = 0;
+      for (let i = TIERS.length - 1; i >= 0; i--) {
+        if (followers >= TIERS[i].minRefs) {
+          tierIndex = i;
+          break;
+        }
+      }
+
+      const minRadius = 0.18;
+      const maxRadius = ADMIN_NODE_RADIUS * 0.5;
+      const factor = tierIndex / (TIERS.length - 1);
+      nodeRadius = minRadius + (maxRadius - minRadius) * factor;
+
+      ringInner = nodeRadius * 1.25;
+      ringOuter = nodeRadius * 1.65;
     }
 
-    const dotGeo = new THREE.SphereGeometry(isAdmin ? 1.1 : 0.65, 20, 20);
+    const dotGeo = new THREE.SphereGeometry(nodeRadius, isAdmin ? 20 : 14, isAdmin ? 20 : 14);
     const dotMat = new THREE.MeshStandardMaterial({
       color: dotColor,
       emissive: emissiveColor,
@@ -1093,7 +1239,7 @@ function rebuildSceneNetwork() {
     const sphere = new THREE.Mesh(dotGeo, dotMat);
     group.add(sphere);
 
-    const haloGeo = new THREE.RingGeometry(isAdmin ? 1.35 : 0.85, isAdmin ? 1.8 : 1.15, 32);
+    const haloGeo = new THREE.RingGeometry(ringInner, ringOuter, isAdmin ? 32 : 16);
     const haloMat = new THREE.MeshBasicMaterial({
       color: isAdmin ? (isZeusMode ? 0xffb703 : 0x1d3557) : dotColor,
       side: THREE.DoubleSide,
@@ -1108,54 +1254,63 @@ function rebuildSceneNetwork() {
     group.userData = { username: u.username };
 
     globeGroup.add(group);
-    nodeMeshes.set(u.username, group);
+    nodeMeshes.set(u.username.toLowerCase(), group);
   });
 
   appData.users.forEach(u => {
+    if (u.isAdmin) return;
+
+    let targetParent = null;
+
     if (u.parent) {
-      const parentUser = appData.users.find(x => 
-        x.username.toLowerCase() === u.parent.toLowerCase() || 
+      targetParent = appData.users.find(x => 
+        x.username.toLowerCase() === u.parent.toLowerCase() ||
         (x.isAdmin && (u.parent.toLowerCase() === '@thehades' || u.parent.toLowerCase() === '@thezeus'))
       );
+    }
 
-      if (parentUser) {
-        const vStart = latLonToVector3(u.lat, u.lon, EARTH_RADIUS + 0.3);
-        const vEnd = latLonToVector3(parentUser.lat, parentUser.lon, EARTH_RADIUS + 0.3);
+    if (!targetParent) {
+      targetParent = adminNode;
+    }
 
-        const dist = vStart.distanceTo(vEnd);
-        const midPoint = vStart.clone().add(vEnd).multiplyScalar(0.5);
-        const altitude = EARTH_RADIUS + Math.max(1.8, dist * 0.22);
-        midPoint.normalize().multiplyScalar(altitude);
+    if (targetParent) {
+      const vStart = latLonToVector3(u.lat, u.lon, EARTH_RADIUS + 0.3);
+      const vEnd = latLonToVector3(targetParent.lat, targetParent.lon, EARTH_RADIUS + 0.3);
 
-        const curve = new THREE.QuadraticBezierCurve3(vStart, midPoint, vEnd);
-        const points = curve.getPoints(45);
-        const geom = new THREE.BufferGeometry().setFromPoints(points);
-        const lineMat = new THREE.LineBasicMaterial({
-          color: isZeusMode ? 0xd97706 : 0x00e5ff,
-          transparent: true,
-          opacity: 0.55
-        });
-        const line = new THREE.Line(geom, lineMat);
-        globeGroup.add(line);
-        linkLines.push(line);
+      const dist = vStart.distanceTo(vEnd);
+      const midPoint = vStart.clone().add(vEnd).multiplyScalar(0.5);
+      const altitude = EARTH_RADIUS + Math.max(1.8, dist * 0.22);
+      midPoint.normalize().multiplyScalar(altitude);
 
-        const tNear = 0.94;
-        const arrowPos = curve.getPoint(tNear);
-        const tangent = curve.getTangent(tNear).normalize();
-        const coneGeo = new THREE.ConeGeometry(0.45, 1.3, 10);
-        const coneMat = new THREE.MeshBasicMaterial({ color: isZeusMode ? 0xb45309 : 0xffb84e });
-        const cone = new THREE.Mesh(coneGeo, coneMat);
-        cone.position.copy(arrowPos);
-        cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent);
-        globeGroup.add(cone);
-        arrowMeshes.push(cone);
+      const curve = new THREE.QuadraticBezierCurve3(vStart, midPoint, vEnd);
+      const points = curve.getPoints(45);
+      const geom = new THREE.BufferGeometry().setFromPoints(points);
+      
+      const lineMat = new THREE.LineBasicMaterial({
+        color: isZeusMode ? 0xd97706 : 0x00e5ff,
+        transparent: true,
+        opacity: 0.65
+      });
+      const line = new THREE.Line(geom, lineMat);
+      globeGroup.add(line);
+      linkLines.push(line);
 
-        const pGeo = new THREE.SphereGeometry(0.25, 8, 8);
-        const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const pMesh = new THREE.Mesh(pGeo, pMat);
-        globeGroup.add(pMesh);
-        energyPulses.push({ curve, mesh: pMesh, progress: Math.random(), speed: 0.005 });
-      }
+      const tNear = 0.94;
+      const arrowPos = curve.getPoint(tNear);
+      const tangent = curve.getTangent(tNear).normalize();
+      const coneGeo = new THREE.ConeGeometry(0.45, 1.3, 10);
+      const coneMat = new THREE.MeshBasicMaterial({ color: isZeusMode ? 0xb45309 : 0xffb84e });
+      const cone = new THREE.Mesh(coneGeo, coneMat);
+      cone.position.copy(arrowPos);
+      cone.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), tangent);
+      globeGroup.add(cone);
+      arrowMeshes.push(cone);
+
+      const pGeo = new THREE.SphereGeometry(0.24, 8, 8);
+      const pMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const pMesh = new THREE.Mesh(pGeo, pMat);
+      globeGroup.add(pMesh);
+      energyPulses.push({ curve, mesh: pMesh, progress: Math.random(), speed: 0.005 });
     }
   });
 }
@@ -1462,7 +1617,6 @@ function setupUI() {
   const loginPass = document.getElementById('loginPassword');
   const regGender = document.getElementById('regGender');
 
-  // FILTRADO ESTRICTO DE ESPACIOS Y FORZADO DE PREFIJO @
   function cleanNoSpacesAndEnforceAt(input) {
     input.addEventListener('input', () => {
       let val = input.value.replace(/\s+/g, '');
@@ -1546,6 +1700,16 @@ function setupUI() {
   });
   document.getElementById('chooseZeus').addEventListener('click', () => {
     selectAdminRole('ZEUS');
+  });
+
+  // DESPLEGABLES DE REPLIEGUE EN TABLÓN ADMIN Y LÍDERES
+  document.getElementById('adminBoardToggle').addEventListener('click', (e) => {
+    if (e.target.closest('#btnEditAdminMsg')) return;
+    document.getElementById('adminBoard').classList.toggle('collapsed');
+  });
+
+  document.getElementById('leaderboardToggle').addEventListener('click', () => {
+    document.getElementById('leaderboardCard').classList.toggle('collapsed');
   });
 
   const gearBtn = document.getElementById('btnAdminGear');
