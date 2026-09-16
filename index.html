@@ -253,56 +253,6 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
 .choice-card h3 { font-family: 'Cinzel'; font-size: 1rem; margin-bottom: 4px; }
 .choice-card p { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; }
 
-.hud {
-  position: fixed; inset: 0;
-  pointer-events: none; z-index: 50;
-  transition: opacity .4s ease;
-}
-.hud.hidden { opacity: 0; }
-
-/* HUD SUPERIOR: DISPOSICIÓN HORIZONTAL COMPACTA */
-.hud-top {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: calc(6px + var(--safe-top)) 10px 4px;
-  background: linear-gradient(to bottom, var(--panel-bg), transparent);
-  pointer-events: auto;
-}
-
-.stat-card {
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
-  padding: 4px 6px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  backdrop-filter: blur(8px);
-  border-radius: 4px;
-  min-width: 0;
-}
-.stat-card .label {
-  font-size: 0.44rem;
-  letter-spacing: 0.12em;
-  color: var(--muted);
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-.stat-card .val {
-  font-family: 'Cinzel', serif;
-  font-size: 0.82rem;
-  color: var(--primary);
-  font-weight: 700;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-
 /* BARRA DE ACCIONES INFERIOR FIJA */
 .hud-actions {
   position: fixed;
@@ -340,33 +290,33 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
 /* ENGRANAJE DE ADMIN */
 .admin-gear-container {
   position: fixed;
-  top: calc(56px + var(--safe-top));
-  right: 10px;
+  top: calc(14px + var(--safe-top));
+  right: 12px;
   z-index: 65;
   pointer-events: auto;
   display: none;
 }
 .btn-gear {
-  width: 36px; height: 36px;
+  width: 38px; height: 38px;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   color: var(--primary);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 0.95rem;
+  cursor: pointer; font-size: 1rem;
   box-shadow: 0 0 15px var(--primary-glow);
   transition: transform .4s ease;
 }
 .btn-gear:hover { transform: rotate(90deg); }
 .admin-gear-menu {
-  position: absolute; top: 42px; right: 0;
+  position: absolute; top: 46px; right: 0;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   border-radius: 6px; padding: 10px;
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 10px;
   box-shadow: 0 0 35px rgba(0,0,0,0.9);
   opacity: 0; pointer-events: none; transform: translateY(-8px);
-  transition: all .3s ease; width: 190px;
+  transition: all .3s ease; width: 200px;
 }
 .admin-gear-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
 .gear-section {
@@ -388,10 +338,10 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 /* TABLÓN DEL ADMINISTRADOR DESPLEGABLE */
 .admin-board {
   position: fixed;
-  top: calc(56px + var(--safe-top));
-  left: 10px;
-  width: 280px;
-  max-width: calc(100vw - 64px);
+  top: calc(14px + var(--safe-top));
+  left: 12px;
+  width: 290px;
+  max-width: calc(100vw - 70px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   box-shadow: 0 0 25px rgba(0,0,0,0.85);
@@ -426,10 +376,10 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 /* TABLÓN DE LÍDERES (TOP JUGADORES) DESPLEGABLE */
 .leaderboard-card {
   position: fixed;
-  left: 10px;
+  left: 12px;
   bottom: calc(52px + var(--safe-bottom));
-  width: 250px;
-  max-width: calc(100vw - 20px);
+  width: 260px;
+  max-width: calc(100vw - 24px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   box-shadow: 0 0 25px rgba(0,0,0,0.85);
@@ -464,10 +414,10 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 /* INSPECTOR DE NODOS */
 .inspector-card {
   position: fixed;
-  right: 10px;
+  right: 12px;
   bottom: calc(52px + var(--safe-bottom));
-  width: 250px;
-  max-width: calc(100vw - 20px);
+  width: 260px;
+  max-width: calc(100vw - 24px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   box-shadow: 0 0 30px rgba(0,0,0,0.85);
@@ -539,45 +489,32 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* AJUSTES PARA PANTALLAS GRANDES Y TABLETS */
-@media (min-width: 601px) {
-  .hud-top {
-    padding: calc(10px + var(--safe-top)) 16px 8px;
-    gap: 12px;
-  }
-  .stat-card {
-    padding: 6px 10px;
-  }
-  .stat-card .val {
-    font-size: 0.95rem;
-  }
-  .admin-board {
-    width: 310px;
-    left: 16px;
-    top: calc(70px + var(--safe-top));
-  }
-  .admin-gear-container {
-    top: calc(14px + var(--safe-top));
-    right: 16px;
-  }
-  .leaderboard-card {
-    left: 16px;
-    bottom: calc(64px + var(--safe-bottom));
-    width: 280px;
-  }
-  .inspector-card {
-    right: 16px;
-    bottom: calc(64px + var(--safe-bottom));
-    width: 270px;
-  }
-  .hud-actions {
-    bottom: calc(16px + var(--safe-bottom));
-    gap: 10px;
-  }
-  .btn-action {
-    padding: 9px 16px;
-    font-size: 0.7rem;
-  }
+@media (max-width: 600px) {
+  .choice-cards { flex-direction: column; gap: 8px; }
+  .choice-card { padding: 12px 8px; }
+  .hud-actions { bottom: calc(8px + var(--safe-bottom)); gap: 6px; }
+  .btn-action { padding: 8px 10px; font-size: 0.62rem; }
+  .leaderboard-card { width: calc(100vw - 24px); bottom: calc(50px + var(--safe-bottom)); max-height: 160px; overflow-y: auto; }
+  .inspector-card { width: calc(100vw - 24px); right: 12px; bottom: calc(50px + var(--safe-bottom)); }
+}
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  .panel { max-width: 420px; }
+  .admin-board { width: 300px; left: 16px; top: calc(20px + var(--safe-top)); }
+  .admin-gear-container { top: calc(16px + var(--safe-top)); right: 16px; }
+  .leaderboard-card { bottom: calc(64px + var(--safe-bottom)); left: 16px; width: 280px; }
+  .inspector-card { right: 16px; bottom: calc(64px + var(--safe-bottom)); width: 270px; }
+  .hud-actions { bottom: calc(16px + var(--safe-bottom)); gap: 10px; }
+}
+
+@media (min-width: 1025px) {
+  .panel { max-width: 460px; }
+  .admin-board { width: 320px; left: 20px; top: calc(20px + var(--safe-top)); }
+  .admin-gear-container { top: calc(20px + var(--safe-top)); right: 20px; }
+  .leaderboard-card { left: 20px; bottom: calc(64px + var(--safe-bottom)); width: 290px; }
+  .inspector-card { right: 20px; bottom: calc(64px + var(--safe-bottom)); width: 280px; }
+  .hud-actions { bottom: calc(20px + var(--safe-bottom)); gap: 12px; }
+  .btn-action { padding: 9px 16px; font-size: 0.7rem; }
 }
 </style>
 </head>
@@ -742,28 +679,6 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
     <div class="admin-modal-actions">
       <button class="btn-modal-cancel" id="btnCancelConfirm">Cancelar</button>
       <button class="btn-primary btn-danger" id="btnAcceptConfirm">Confirmar</button>
-    </div>
-  </div>
-</div>
-
-<!-- HUD -->
-<div id="hud" class="hud hidden">
-  <div class="hud-top">
-    <div class="stat-card">
-      <span class="label">Nodo Activo</span>
-      <span class="val" id="hudUser">—</span>
-    </div>
-    <div class="stat-card">
-      <span class="label">Ubicación GPS</span>
-      <span class="val" id="hudCity" style="color:#10b981;">—</span>
-    </div>
-    <div class="stat-card">
-      <span class="label">Vínculos a Favor</span>
-      <span class="val" id="hudRefs" style="color:#ffb84e;">0</span>
-    </div>
-    <div class="stat-card">
-      <span class="label">Conexión Raíz</span>
-      <span class="val" id="hudParent">—</span>
     </div>
   </div>
 </div>
@@ -1328,7 +1243,6 @@ function checkAdminHourlyShift() {
       saveData();
       rebuildSceneNetwork();
       if (currentUser && currentUser.isAdmin) {
-        document.getElementById('hudCity').textContent = newLoc.city.split(',')[0];
         updateInspectorCard(currentUser.username);
         showToast(`Santuario trasladado a: ${newLoc.city.split(',')[0]}`);
       }
@@ -1702,7 +1616,7 @@ function setupUI() {
     selectAdminRole('ZEUS');
   });
 
-  // DESPLEGABLES DE REPLIEGUE EN TABLÓN ADMIN Y LÍDERES
+  // REPLIEGUES DE PANELES EN MÓVILES
   document.getElementById('adminBoardToggle').addEventListener('click', (e) => {
     if (e.target.closest('#btnEditAdminMsg')) return;
     document.getElementById('adminBoard').classList.toggle('collapsed');
@@ -1801,7 +1715,6 @@ function setupUI() {
     document.getElementById('ageCheck').checked = false;
     document.getElementById('termsCheck').checked = false;
 
-    document.getElementById('hud').classList.add('hidden');
     document.getElementById('hudActions').classList.add('hidden');
     document.getElementById('adminBoard').classList.add('hidden');
     document.getElementById('adminGearContainer').style.display = 'none';
@@ -1871,7 +1784,6 @@ function selectAdminRole(role) {
   rebuildSceneNetwork();
 
   document.getElementById('adminChoiceOverlay').classList.add('hidden');
-  document.getElementById('hud').classList.remove('hidden');
   document.getElementById('hudActions').classList.remove('hidden');
   document.getElementById('adminBoard').classList.remove('hidden');
 
@@ -1884,14 +1796,7 @@ function selectAdminRole(role) {
 
   document.getElementById('btnEditAdminMsg').style.display = 'inline-block';
 
-  const myRefs = appData.users.filter(x => x.parent && (x.parent.toLowerCase() === '@thehades' || x.parent.toLowerCase() === '@thezeus')).length;
-  document.getElementById('hudUser').textContent = adminName;
-  document.getElementById('hudCity').textContent = rootNode.city.split(',')[0];
-  document.getElementById('hudRefs').textContent = myRefs;
-  document.getElementById('hudParent').textContent = 'Soberano Supremo';
-
   applyGlobalView();
-
   updateInspectorCard(adminName);
   showToast(isZeus ? '⚡ Modo Zeus: Fondo Azul Cielo' : '🌑 Modo Hades: Abismo Puro');
 }
@@ -1974,7 +1879,6 @@ function activateSession(user) {
   rebuildSceneNetwork();
 
   document.getElementById('authOverlay').classList.add('hidden');
-  document.getElementById('hud').classList.remove('hidden');
   document.getElementById('hudActions').classList.remove('hidden');
   document.getElementById('adminBoard').classList.remove('hidden');
 
@@ -1984,14 +1888,7 @@ function activateSession(user) {
   document.getElementById('leaderboardCard').style.display = 'block';
   updateLeaderboard();
 
-  const myRefs = appData.users.filter(x => x.parent && x.parent.toLowerCase() === user.username.toLowerCase()).length;
-  document.getElementById('hudUser').textContent = user.username;
-  document.getElementById('hudCity').textContent = user.city.split(',')[0];
-  document.getElementById('hudRefs').textContent = myRefs;
-  document.getElementById('hudParent').textContent = user.parent || 'Nodo Raíz';
-
   applyGlobalView();
-
   updateInspectorCard(user.username);
 }
 
