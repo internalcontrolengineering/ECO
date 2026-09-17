@@ -5,20 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
 <title>ECO — Red Cósmica Universal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 
 :root {
-  --bg: #010206;
+  --bg: #05070d;
   --panel-bg: rgba(5, 10, 20, 0.94);
   --border: rgba(78, 231, 255, 0.25);
   --primary: #4ee7ff;
   --primary-glow: rgba(78, 231, 255, 0.45);
-  --text: #e2ebf6;
-  --muted: #6b7c96;
+  --text: #dfe9f5;
+  --muted: #6f7d94;
   --card-bg: rgba(0, 0, 0, 0.65);
   --danger: #ef4444;
   --danger-glow: rgba(239, 68, 68, 0.4);
@@ -48,10 +48,19 @@ html, body {
   transition: background 0.6s ease, color 0.4s ease;
 }
 
+/* CANVAS DE RED 3D Y DE ONDAS SONARES DEL SPLASH */
 canvas#map3d {
   position: fixed; inset: 0;
   width: 100%; height: 100%;
   display: block; z-index: 0;
+}
+
+canvas#sonarBg {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  display: block; z-index: 95;
+  pointer-events: none;
+  transition: opacity 0.8s ease;
 }
 
 .bg-fx {
@@ -63,6 +72,7 @@ body.theme-zeus .bg-fx {
   background: radial-gradient(circle at 50% 50%, transparent 35%, rgba(126, 200, 248, 0.2) 70%, rgba(85, 168, 230, 0.5) 100%);
 }
 
+/* OVERLAYS */
 .overlay {
   position: fixed; inset: 0;
   display: flex; align-items: center; justify-content: center;
@@ -71,7 +81,7 @@ body.theme-zeus .bg-fx {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   background: rgba(1, 2, 6, 0.88);
-  transition: opacity .4s ease, visibility .4s ease;
+  transition: opacity .5s ease, visibility .5s ease;
   overflow-y: auto;
 }
 body.theme-zeus .overlay {
@@ -79,6 +89,79 @@ body.theme-zeus .overlay {
 }
 .overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
+/* PANTALLA DE INICIO (SPLASH CON PULSACIONES) */
+#splashOverlay {
+  background: radial-gradient(circle at center, rgba(5,7,13,0.85), rgba(5,7,13,0.98));
+  z-index: 120;
+}
+.loader-inner {
+  text-align: center;
+  padding: 30px 20px;
+  max-width: 560px;
+  width: 100%;
+  animation: fadeUp 0.8s ease both;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.loader-ring {
+  width: 58px; height: 58px;
+  margin: 0 auto 24px;
+  border: 1px solid rgba(78,231,255,0.15);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.title-pulsing {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(3rem, 16vw, 5.5rem);
+  letter-spacing: 0.35em;
+  font-weight: 700;
+  color: var(--primary);
+  animation: pulseGlow 3s ease-in-out infinite;
+  margin-bottom: 6px;
+  margin-left: 0.35em;
+}
+@keyframes pulseGlow {
+  0%, 100% { text-shadow: 0 0 20px rgba(78,231,255,0.6), 0 0 60px rgba(78,231,255,0.3); }
+  50%      { text-shadow: 0 0 40px rgba(78,231,255,0.9), 0 0 100px rgba(78,231,255,0.5); }
+}
+
+.btn-start {
+  position: relative;
+  padding: 15px 44px;
+  background: transparent;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  font-family: 'Inter', sans-serif;
+  font-size: clamp(0.85rem, 3.2vw, 1rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  min-height: 48px;
+  min-width: 180px;
+}
+.btn-start::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent, rgba(78,231,255,0.25), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.btn-start:hover::before, .btn-start:active::before { transform: translateX(100%); }
+.btn-start:hover, .btn-start:active {
+  box-shadow: 0 0 30px rgba(78,231,255,0.5), inset 0 0 20px rgba(78,231,255,0.1);
+  letter-spacing: 0.38em;
+}
+
+/* FORMULARIOS DE AUTENTICACIÓN */
 .panel {
   width: 100%; max-width: 440px;
   background: var(--panel-bg);
@@ -133,6 +216,13 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
   box-shadow: 0 0 14px var(--primary-glow);
 }
 .field input[readonly] { opacity: 0.75; cursor: not-allowed; }
+
+.geo-badge {
+  font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 4px;
+}
+.geo-badge.verifying { color: #ffb84e; }
+.geo-badge.locked { color: #10b981; }
 
 .pwd-hint {
   font-size: 0.58rem; color: var(--muted); margin-top: 3px; line-height: 1.3;
@@ -203,17 +293,6 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
   opacity: 0.4; cursor: not-allowed; border-color: var(--muted); color: var(--muted);
 }
 
-.btn-danger {
-  border-color: var(--danger) !important;
-  color: var(--danger) !important;
-  background: rgba(239, 68, 68, 0.1) !important;
-}
-.btn-danger:hover:not(:disabled) {
-  background: var(--danger) !important;
-  color: #fff !important;
-  box-shadow: 0 0 25px var(--danger-glow) !important;
-}
-
 .switch-auth-link {
   text-align: center; margin-top: 14px;
   font-size: 0.74rem; color: var(--muted);
@@ -223,6 +302,7 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
   cursor: pointer; letter-spacing: 0.05em; margin-left: 4px;
 }
 
+/* BARRA DOCK INFERIOR */
 .bottom-dock {
   position: fixed;
   bottom: calc(12px + var(--safe-bottom));
@@ -542,13 +622,24 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 <body>
 
 <canvas id="map3d"></canvas>
+<canvas id="sonarBg"></canvas>
 <div class="bg-fx"></div>
 
-<!-- OVERLAY AUTENTICACIÓN -->
-<div id="authOverlay" class="overlay">
+<!-- SPLASH INICIAL CON PULSACIONES Y BOTÓN INICIAR -->
+<div id="splashOverlay" class="overlay">
+  <div class="loader-inner">
+    <div class="loader-ring"></div>
+    <h1 class="title-pulsing">ECO</h1>
+    <p class="subtitle">Red Cósmica Global</p>
+    <button id="btnSplashStart" class="btn-start">Iniciar</button>
+  </div>
+</div>
+
+<!-- OVERLAY AUTENTICACIÓN (LOGIN / REGISTRO) -->
+<div id="authOverlay" class="overlay hidden">
   <div class="panel">
     <h1 class="title">ECO</h1>
-    <p class="subtitle">Red Cósmica Global</p>
+    <p class="subtitle">Acceso a la Red</p>
 
     <div id="formLogin">
       <div class="field">
@@ -973,7 +1064,79 @@ function getUserTierData(u) {
 }
 
 /* =========================================================
-   MOTOR THREE.JS
+   CANVAS 2D: ONDAS SONARES Y PULSACIONES DE INICIO
+   ========================================================= */
+let sonarCanvas, sonarCtx;
+let sonarPings = [];
+let sonarActive = true;
+let sonarLastTime = performance.now();
+
+function initSonar() {
+  sonarCanvas = document.getElementById('sonarBg');
+  sonarCtx = sonarCanvas.getContext('2d');
+  resizeSonar();
+  window.addEventListener('resize', resizeSonar);
+  requestAnimationFrame(sonarLoop);
+}
+
+function resizeSonar() {
+  if (!sonarCanvas) return;
+  sonarCanvas.width = window.innerWidth;
+  sonarCanvas.height = window.innerHeight;
+}
+
+function sonarLoop(now) {
+  if (!sonarActive) return;
+  const dt = Math.min((now - sonarLastTime) / 1000, 0.033);
+  sonarLastTime = now;
+
+  if (Math.random() < dt * 0.9) {
+    sonarPings.push({
+      x: window.innerWidth * (0.2 + Math.random() * 0.6),
+      y: window.innerHeight * (0.2 + Math.random() * 0.6),
+      r: 0,
+      maxR: 350 + Math.random() * 200,
+      life: 0,
+      maxLife: 1.4 + Math.random() * 0.5
+    });
+  }
+
+  sonarCtx.clearRect(0, 0, sonarCanvas.width, sonarCanvas.height);
+
+  for (let i = sonarPings.length - 1; i >= 0; i--) {
+    const p = sonarPings[i];
+    p.life += dt;
+    const progress = p.life / p.maxLife;
+    p.r = p.maxR * (1 - Math.pow(1 - progress, 2.2));
+    const alpha = Math.max(0, 1 - progress);
+
+    // Ondas concéntricas sutiles estilo ecolocalización
+    sonarCtx.save();
+    sonarCtx.beginPath();
+    sonarCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    sonarCtx.strokeStyle = `rgba(78, 231, 255, ${0.45 * alpha})`;
+    sonarCtx.lineWidth = 1.8;
+    sonarCtx.shadowColor = 'rgba(78, 231, 255, 0.8)';
+    sonarCtx.shadowBlur = 12;
+    sonarCtx.stroke();
+
+    sonarCtx.beginPath();
+    sonarCtx.arc(p.x, p.y, Math.max(0, p.r - 28), 0, Math.PI * 2);
+    sonarCtx.strokeStyle = `rgba(160, 107, 255, ${0.25 * alpha})`;
+    sonarCtx.lineWidth = 1.2;
+    sonarCtx.stroke();
+    sonarCtx.restore();
+
+    if (p.life >= p.maxLife) {
+      sonarPings.splice(i, 1);
+    }
+  }
+
+  requestAnimationFrame(sonarLoop);
+}
+
+/* =========================================================
+   MOTOR THREE.JS (RED CÓSMICA 3D)
    ========================================================= */
 let scene, camera, renderer, globeGroup;
 let ambientLight, sunLight;
@@ -989,7 +1152,7 @@ let isDragging = false;
 let autoRotate = true;
 let prevMouse = { x: 0, y: 0 };
 const GLOBAL_RADIUS = 75;
-const SPACE_RADIUS = 150; // Zoom out máximo para ver el mundo completo a distancia cósmica
+const SPACE_RADIUS = 150;
 let spherical = { radius: GLOBAL_RADIUS, theta: 0.4, phi: 1.2 };
 let targetLook = new THREE.Vector3(0, 0, 0);
 
@@ -1718,6 +1881,16 @@ function setupUI() {
     }
   });
 
+  // BOTÓN "INICIAR" DEL SPLASH -> PASA DIRECTO AL MÓDULO DE LOGIN
+  document.getElementById('btnSplashStart').addEventListener('click', () => {
+    document.getElementById('splashOverlay').classList.add('hidden');
+    document.getElementById('authOverlay').classList.remove('hidden');
+    // Desactivar el canvas sonar para optimizar el rendimiento gráfico
+    sonarActive = false;
+    document.getElementById('sonarBg').style.opacity = '0';
+    getRealLocation();
+  });
+
   document.getElementById('linkGoRegister').addEventListener('click', () => {
     const deviceId = getDeviceFingerprint();
     const hasAccount = localStorage.getItem('ECO_BOUND_USER') || appData.users.some(u => u.deviceId === deviceId && !u.isAdmin);
@@ -1773,7 +1946,6 @@ function setupUI() {
     }
   });
 
-  // CONFIGURACIONES AGRUPADAS DENTRO DEL ENGRANE
   const chkGlobal = document.getElementById('chkGlobalView');
   const chkSpace = document.getElementById('chkSpaceView');
   const chkRot = document.getElementById('chkRotation');
@@ -1948,8 +2120,6 @@ function selectAdminRole(role) {
 
   document.getElementById('btnEditAdminMsg').style.display = 'inline-block';
 
-  document.getElementById('chkGlobalView').checked = true;
-  document.getElementById('chkSpaceView').checked = false;
   applyGlobalView();
   updateInspectorCard(adminName);
   showToast(isZeus ? '⚡ Modo Zeus: Fondo Azul Cielo' : '🌑 Modo Hades: Abismo Puro');
@@ -2072,9 +2242,9 @@ function showToast(msg) {
 
 window.addEventListener('DOMContentLoaded', () => {
   initDatabase();
+  initSonar();
   init3D();
   setupUI();
-  getRealLocation();
 });
 
 })();
