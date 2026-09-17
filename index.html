@@ -134,13 +134,6 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
 }
 .field input[readonly] { opacity: 0.75; cursor: not-allowed; }
 
-.geo-badge {
-  font-size: 0.58rem; letter-spacing: 0.05em; text-transform: uppercase;
-  display: flex; align-items: center; gap: 4px;
-}
-.geo-badge.verifying { color: #ffb84e; }
-.geo-badge.locked { color: #10b981; }
-
 .pwd-hint {
   font-size: 0.58rem; color: var(--muted); margin-top: 3px; line-height: 1.3;
 }
@@ -230,118 +223,233 @@ body.theme-zeus .field select option { background: #fff; color: #0f172a; }
   cursor: pointer; letter-spacing: 0.05em; margin-left: 4px;
 }
 
-.choice-cards {
-  display: flex; gap: 10px; margin-top: 12px;
-}
-.choice-card {
-  flex: 1; padding: 16px 10px;
-  border-radius: 6px; cursor: pointer;
-  transition: all .3s ease; text-align: center;
-}
-.choice-card.dark-option {
-  background: #050b14; border: 2px solid #00e5ff; color: #4ee7ff;
-}
-.choice-card.dark-option:hover {
-  box-shadow: 0 0 25px rgba(0, 229, 255, 0.5); transform: translateY(-2px);
-}
-.choice-card.light-option {
-  background: #f8fafc; border: 2px solid #d97706; color: #b45309;
-}
-.choice-card.light-option:hover {
-  box-shadow: 0 0 25px rgba(245, 158, 11, 0.5); transform: translateY(-2px);
-}
-.choice-card h3 { font-family: 'Cinzel'; font-size: 1rem; margin-bottom: 4px; }
-.choice-card p { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.85; }
-
-/* BARRA DE ACCIONES INFERIOR FIJA */
-.hud-actions {
+.bottom-dock {
   position: fixed;
-  bottom: calc(8px + var(--safe-bottom));
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: calc(12px + var(--safe-bottom));
+  left: 0; right: 0;
   display: flex;
-  gap: 8px;
-  pointer-events: auto;
-  z-index: 60;
-  width: calc(100% - 24px);
-  max-width: 440px;
-}
-.btn-action {
-  flex: 1;
-  background: var(--panel-bg);
-  border: 1px solid var(--border);
-  color: var(--text);
-  padding: 8px 6px;
-  font-size: 0.65rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  display: flex;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  gap: 5px;
-  backdrop-filter: blur(8px);
-  border-radius: 4px;
-  transition: all .3s;
-  white-space: nowrap;
+  padding: 0 16px;
+  z-index: 60;
+  pointer-events: none;
 }
-.btn-action:hover { border-color: var(--primary); color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+.bottom-dock.hidden { display: none; }
 
-/* ENGRANAJE DE ADMIN */
-.admin-gear-container {
-  position: fixed;
-  top: calc(14px + var(--safe-top));
-  right: 12px;
-  z-index: 65;
+.dock-btn-wrapper {
+  position: relative;
   pointer-events: auto;
-  display: none;
 }
-.btn-gear {
-  width: 38px; height: 38px;
+
+.dock-round-btn {
+  width: 44px; height: 44px;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   color: var(--primary);
   border-radius: 50%;
   display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 1rem;
-  box-shadow: 0 0 15px var(--primary-glow);
-  transition: transform .4s ease;
+  cursor: pointer; font-size: 1.1rem;
+  box-shadow: 0 0 16px var(--primary-glow);
+  transition: all .3s ease;
 }
-.btn-gear:hover { transform: rotate(90deg); }
-.admin-gear-menu {
-  position: absolute; top: 46px; right: 0;
+.dock-round-btn:hover {
+  transform: translateY(-2px);
+  background: var(--primary);
+  color: #010206;
+}
+.dock-round-btn.active {
+  background: var(--primary);
+  color: #010206;
+}
+
+.dock-popup-menu {
+  position: absolute;
+  bottom: 56px;
+  right: 0;
   background: var(--panel-bg);
   border: 1px solid var(--primary);
-  border-radius: 6px; padding: 10px;
-  display: flex; flex-direction: column; gap: 10px;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   box-shadow: 0 0 35px rgba(0,0,0,0.9);
-  opacity: 0; pointer-events: none; transform: translateY(-8px);
-  transition: all .3s ease; width: 200px;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: all .25s ease;
+  width: 230px;
 }
-.admin-gear-menu.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-.gear-section {
-  display: flex; flex-direction: column; gap: 4px;
+.dock-popup-menu.open {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
-.gear-section label {
-  font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--primary); font-weight: 700;
+
+.menu-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
+.menu-section-title {
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 3px;
+}
+
+.toggle-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text);
+  padding: 3px 0;
+}
+.switch-box {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 18px;
+}
+.switch-box input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: rgba(255,255,255,0.15);
+  transition: .3s;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+}
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 2px;
+  bottom: 2px;
+  background-color: var(--muted);
+  transition: .3s;
+  border-radius: 50%;
+}
+input:checked + .slider {
+  background-color: var(--primary);
+}
+input:checked + .slider:before {
+  transform: translateX(16px);
+  background-color: #010206;
+}
+
+.btn-popup-logout {
+  width: 100%;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid var(--danger);
+  color: #f87171;
+  padding: 8px;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all .25s;
+  font-family: inherit;
+}
+.btn-popup-logout:hover {
+  background: var(--danger);
+  color: #fff;
+  box-shadow: 0 0 15px var(--danger-glow);
+}
+
 .gear-select {
   width: 100%; background: var(--card-bg);
   border: 1px solid var(--border); color: var(--text);
-  padding: 6px 8px; font-size: 0.72rem; border-radius: 3px;
+  padding: 6px 8px; font-size: 0.7rem; border-radius: 3px;
   outline: none; font-family: inherit;
 }
 .gear-select option { background: #070e1a; color: #fff; }
 body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
 
-/* TABLÓN DEL ADMINISTRADOR DESPLEGABLE */
+.leaderboard-card {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  width: 280px;
+  max-width: 85vw;
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 25px rgba(0,0,0,0.85);
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: none;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.25s ease;
+}
+.leaderboard-card.open {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+.leaderboard-title {
+  font-family: 'Cinzel'; font-size: 0.76rem; color: var(--primary);
+  letter-spacing: 0.12em; display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px;
+}
+#leaderboardList { max-height: 150px; overflow-y: auto; }
+.leader-item {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 4px 6px; margin-bottom: 4px;
+  background: var(--card-bg); border-left: 2px solid var(--primary);
+  font-size: 0.62rem; border-radius: 2px;
+}
+.leader-item .name { font-weight: 700; color: var(--text); }
+.leader-item .tier-info { text-align: right; color: var(--muted); font-size: 0.56rem; line-height: 1.25; }
+.leader-item .tier-info span { color: var(--primary); font-weight: 600; }
+
+.inspector-card {
+  position: absolute;
+  bottom: 56px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: 280px;
+  max-width: 85vw;
+  background: var(--panel-bg);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 30px rgba(0,0,0,0.85);
+  padding: 12px;
+  border-radius: 8px;
+  display: none;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+.inspector-card.open {
+  display: block;
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.inspector-card h4 { font-family: 'Cinzel'; color: var(--primary); letter-spacing: 0.14em; font-size: 0.86rem; }
+.inspector-card p { font-size: 0.65rem; color: var(--muted); margin-top: 4px; }
+.inspector-card span { color: var(--text); font-weight: 600; }
+
 .admin-board {
   position: fixed;
   top: calc(14px + var(--safe-top));
-  left: 12px;
+  left: 14px;
   width: 290px;
-  max-width: calc(100vw - 70px);
+  max-width: calc(100vw - 28px);
   background: var(--panel-bg);
   border: 1px solid var(--primary);
   box-shadow: 0 0 25px rgba(0,0,0,0.85);
@@ -373,65 +481,6 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
   outline: none; height: 50px; border-radius: 3px;
 }
 
-/* TABLÓN DE LÍDERES (TOP JUGADORES) DESPLEGABLE */
-.leaderboard-card {
-  position: fixed;
-  left: 12px;
-  bottom: calc(52px + var(--safe-bottom));
-  width: 260px;
-  max-width: calc(100vw - 24px);
-  background: var(--panel-bg);
-  border: 1px solid var(--primary);
-  box-shadow: 0 0 25px rgba(0,0,0,0.85);
-  padding: 8px 10px;
-  z-index: 55;
-  pointer-events: auto;
-  border-radius: 6px;
-  display: none;
-  transition: all 0.3s ease;
-}
-.leaderboard-title {
-  font-family: 'Cinzel'; font-size: 0.72rem; color: var(--primary);
-  letter-spacing: 0.12em; display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 6px; border-bottom: 1px solid var(--border); padding-bottom: 3px;
-  cursor: pointer;
-}
-.leaderboard-title .toggle-icon { font-size: 0.62rem; transition: transform 0.3s; }
-.leaderboard-card.collapsed .leaderboard-title { margin-bottom: 0; border-bottom: none; padding-bottom: 0; }
-.leaderboard-card.collapsed #leaderboardList { display: none; }
-.leaderboard-card.collapsed .toggle-icon { transform: rotate(180deg); }
-#leaderboardList { max-height: 130px; overflow-y: auto; }
-.leader-item {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 3px 5px; margin-bottom: 3px;
-  background: var(--card-bg); border-left: 2px solid var(--primary);
-  font-size: 0.6rem; border-radius: 2px;
-}
-.leader-item .name { font-weight: 700; color: var(--text); }
-.leader-item .tier-info { text-align: right; color: var(--muted); font-size: 0.54rem; }
-.leader-item .tier-info span { color: var(--primary); font-weight: 600; }
-
-/* INSPECTOR DE NODOS */
-.inspector-card {
-  position: fixed;
-  right: 12px;
-  bottom: calc(52px + var(--safe-bottom));
-  width: 260px;
-  max-width: calc(100vw - 24px);
-  background: var(--panel-bg);
-  border: 1px solid var(--primary);
-  box-shadow: 0 0 30px rgba(0,0,0,0.85);
-  padding: 10px 12px;
-  z-index: 70;
-  pointer-events: auto;
-  display: none;
-  border-radius: 6px;
-}
-.inspector-card h4 { font-family: 'Cinzel'; color: var(--primary); letter-spacing: 0.14em; font-size: 0.84rem; }
-.inspector-card p { font-size: 0.64rem; color: var(--muted); margin-top: 3px; }
-.inspector-card span { color: var(--text); font-weight: 600; }
-
-/* MODALES DE GESTIÓN Y CONFIRMACIÓN ADMIN */
 .admin-modal-box {
   width: 100%; max-width: 380px;
   background: var(--panel-bg);
@@ -488,34 +537,6 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
   max-width: 90vw;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-@media (max-width: 600px) {
-  .choice-cards { flex-direction: column; gap: 8px; }
-  .choice-card { padding: 12px 8px; }
-  .hud-actions { bottom: calc(8px + var(--safe-bottom)); gap: 6px; }
-  .btn-action { padding: 8px 10px; font-size: 0.62rem; }
-  .leaderboard-card { width: calc(100vw - 24px); bottom: calc(50px + var(--safe-bottom)); max-height: 160px; overflow-y: auto; }
-  .inspector-card { width: calc(100vw - 24px); right: 12px; bottom: calc(50px + var(--safe-bottom)); }
-}
-
-@media (min-width: 601px) and (max-width: 1024px) {
-  .panel { max-width: 420px; }
-  .admin-board { width: 300px; left: 16px; top: calc(20px + var(--safe-top)); }
-  .admin-gear-container { top: calc(16px + var(--safe-top)); right: 16px; }
-  .leaderboard-card { bottom: calc(64px + var(--safe-bottom)); left: 16px; width: 280px; }
-  .inspector-card { right: 16px; bottom: calc(64px + var(--safe-bottom)); width: 270px; }
-  .hud-actions { bottom: calc(16px + var(--safe-bottom)); gap: 10px; }
-}
-
-@media (min-width: 1025px) {
-  .panel { max-width: 460px; }
-  .admin-board { width: 320px; left: 20px; top: calc(20px + var(--safe-top)); }
-  .admin-gear-container { top: calc(20px + var(--safe-top)); right: 20px; }
-  .leaderboard-card { left: 20px; bottom: calc(64px + var(--safe-bottom)); width: 290px; }
-  .inspector-card { right: 20px; bottom: calc(64px + var(--safe-bottom)); width: 280px; }
-  .hud-actions { bottom: calc(20px + var(--safe-bottom)); gap: 12px; }
-  .btn-action { padding: 9px 16px; font-size: 0.7rem; }
-}
 </style>
 </head>
 <body>
@@ -612,53 +633,6 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
   </div>
 </div>
 
-<!-- MODAL ELECCIÓN INICIAL DE ADMIN -->
-<div id="adminChoiceOverlay" class="overlay hidden">
-  <div class="panel">
-    <h2 style="font-family:'Cinzel'; color:var(--primary); font-size:1.35rem; text-align:center;">PORTAL DEL SOBERANO</h2>
-    <p style="font-size:0.75rem; color:var(--muted); text-align:center; margin-top:4px;">Elige la manifestación para gobernar la red:</p>
-    
-    <div class="choice-cards">
-      <div class="choice-card dark-option" id="chooseHades">
-        <i class="fas fa-moon" style="font-size:1.8rem; margin-bottom:8px;"></i>
-        <h3>@TheHades</h3>
-        <p>Gobernador del Abismo</p>
-        <span style="font-size:0.6rem; color:#4ee7ff; display:block; margin-top:6px;">MODO OSCURO / ABISMO PURO</span>
-      </div>
-
-      <div class="choice-card light-option" id="chooseZeus">
-        <i class="fas fa-bolt" style="font-size:1.8rem; margin-bottom:8px;"></i>
-        <h3>@TheZeus</h3>
-        <p>Soberano del Olimpo</p>
-        <span style="font-size:0.6rem; color:#d97706; display:block; margin-top:6px;">MODO CLARO / CIELO AZUL</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ENGRANAJE CON DESPLEGABLES ORDENADOS (ADMIN) -->
-<div class="admin-gear-container" id="adminGearContainer">
-  <div class="btn-gear" id="btnAdminGear"><i class="fas fa-cog"></i></div>
-  <div class="admin-gear-menu" id="adminGearMenu">
-    <div class="gear-section">
-      <label><i class="fas fa-user-shield"></i> Perfil Soberano</label>
-      <select class="gear-select" id="gearProfileSelect">
-        <option value="HADES">@TheHades (Oscuro)</option>
-        <option value="ZEUS">@TheZeus (Claro)</option>
-      </select>
-    </div>
-
-    <div class="gear-section">
-      <label><i class="fas fa-tools"></i> Gestión de Red</label>
-      <select class="gear-select" id="gearActionSelect">
-        <option value="" disabled selected hidden>Acción de Red...</option>
-        <option value="DELETE">Purgar Nodo</option>
-        <option value="RESET">Resetear Red</option>
-      </select>
-    </div>
-  </div>
-</div>
-
 <!-- MODAL: SELECCIÓN DE USUARIO PARA ELIMINAR -->
 <div id="deleteUserOverlay" class="overlay hidden">
   <div class="admin-modal-box">
@@ -701,33 +675,91 @@ body.theme-zeus .gear-select option { background: #fff; color: #0f172a; }
   </div>
 </div>
 
-<!-- CUADRO TOP DE JUGADORES (SOLO USUARIOS REGULARES) CON REPLIEGUE -->
-<div id="leaderboardCard" class="leaderboard-card">
-  <div class="leaderboard-title" id="leaderboardToggle">
-    <span><i class="fas fa-trophy" style="color:#ffb84e;"></i> LÍDERES DE RED</span>
-    <i class="fas fa-chevron-up toggle-icon"></i>
+<!-- BARRA DOCK INFERIOR -->
+<div id="bottomDock" class="bottom-dock hidden">
+  <!-- Botón Izquierdo: Corona (Líderes) -->
+  <div class="dock-btn-wrapper">
+    <button class="dock-round-btn" id="btnDockCrown" title="Líderes de Red">
+      <i class="fas fa-crown"></i>
+    </button>
+    <div id="leaderboardCard" class="leaderboard-card">
+      <div class="leaderboard-title">
+        <span><i class="fas fa-trophy" style="color:#ffb84e;"></i> LÍDERES DE RED</span>
+      </div>
+      <div id="leaderboardList"></div>
+    </div>
   </div>
-  <div id="leaderboardList"></div>
-</div>
 
-<!-- ACCIONES FLOTANTES (VISTA GLOBAL POR DEFECTO) -->
-<div id="hudActions" class="hud-actions hidden">
-  <button class="btn-action" id="btnRecenter"><i class="fas fa-globe-americas"></i> Vista Global</button>
-  <button class="btn-action" id="btnRotateToggle"><i class="fas fa-sync-alt"></i> Rotación</button>
-  <button class="btn-action" id="btnLogout"><i class="fas fa-sign-out-alt"></i> Salir</button>
-</div>
-
-<!-- INSPECTOR DE NODO -->
-<div id="nodeInspector" class="inspector-card">
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <h4 id="inspName">@USUARIO</h4>
-    <button id="closeInsp" style="background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:1.1rem;">✕</button>
+  <!-- Botón Central: Perfil (Inspector de Datos) -->
+  <div class="dock-btn-wrapper">
+    <button class="dock-round-btn" id="btnDockProfile" title="Información de Nodo">
+      <i class="fas fa-user-circle"></i>
+    </button>
+    <div id="nodeInspector" class="inspector-card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h4 id="inspName">@USUARIO</h4>
+      </div>
+      <p>Género: <span id="inspGender"></span></p>
+      <p>Ciudad: <span id="inspCity"></span></p>
+      <p>Coordenadas: <span id="inspCoords"></span></p>
+      <p>Enlace Superior: <span id="inspParent" style="color:var(--primary);"></span></p>
+      <p>Ejército disponible: <span id="inspRefs" style="color:#ffb84e;">0</span></p>
+      <p id="inspLevelRow">Nivel: <span id="inspLevel" style="color:var(--primary);"></span></p>
+      <p id="inspNextRow">Siguiente ascenso: <span id="inspNext" style="color:#10b981;"></span></p>
+    </div>
   </div>
-  <p>Género: <span id="inspGender"></span></p>
-  <p>Ciudad: <span id="inspCity"></span></p>
-  <p>Coordenadas: <span id="inspCoords"></span></p>
-  <p>Enlace Superior: <span id="inspParent" style="color:var(--primary);"></span></p>
-  <p>Subnodos que apuntan a él: <span id="inspRefs" style="color:#ffb84e;">0</span></p>
+
+  <!-- Botón Derecho: Engrane (Configuración / Salir) -->
+  <div class="dock-btn-wrapper">
+    <button class="dock-round-btn" id="btnDockGear" title="Configuración">
+      <i class="fas fa-cog"></i>
+    </button>
+    <div id="dockGearMenu" class="dock-popup-menu">
+      <div class="menu-section">
+        <span class="menu-section-title"><i class="fas fa-sliders-h"></i> Visualización</span>
+        <div class="toggle-switch-row">
+          <span>Vista General</span>
+          <label class="switch-box">
+            <input type="checkbox" id="chkGlobalView" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-switch-row">
+          <span>Vista Espacial</span>
+          <label class="switch-box">
+            <input type="checkbox" id="chkSpaceView">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="toggle-switch-row">
+          <span>Rotación</span>
+          <label class="switch-box">
+            <input type="checkbox" id="chkRotation" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="menu-section" id="adminGearControls" style="display:none;">
+        <span class="menu-section-title"><i class="fas fa-user-shield"></i> Soberanía</span>
+        <select class="gear-select" id="gearProfileSelect">
+          <option value="HADES">@TheHades (Oscuro)</option>
+          <option value="ZEUS">@TheZeus (Claro)</option>
+        </select>
+        <select class="gear-select" id="gearActionSelect" style="margin-top:4px;">
+          <option value="" disabled selected hidden>Acción de Red...</option>
+          <option value="DELETE">Purgar Nodo</option>
+          <option value="RESET">Resetear Red</option>
+        </select>
+      </div>
+
+      <div class="menu-section" style="border-top:1px solid var(--border); padding-top:6px;">
+        <button class="btn-popup-logout" id="btnLogout">
+          <i class="fas fa-sign-out-alt"></i> Salir de la Red
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="toast" id="toast">Aviso</div>
@@ -785,12 +817,21 @@ function getHourlyAdminSanctuary() {
   return OLYMPUS_SANCTUARIES[index];
 }
 
+function isDaytimeAtLocation(lon) {
+  const now = new Date();
+  const utcHours = now.getUTCHours() + now.getUTCMinutes() / 60;
+  let solarHours = (utcHours + lon / 15) % 24;
+  if (solarHours < 0) solarHours += 24;
+  return solarHours >= 6 && solarHours < 18.5;
+}
+
 const ADMIN_MASTER_HASH = "71694f2759e6eb1cf0cff131ae950a7c4ae655ae28a2a4fe354b5dfd9d5cbe98";
 const DB_KEY = 'ECO_PERMANENT_DATA_V7';
 
 let appData = {
   adminMessage: "La resonancia de cada vínculo propaga la soberanía en la red cósmica.",
   currentAdminRole: 'HADES',
+  manualAdminOverride: false,
   users: []
 };
 
@@ -831,6 +872,7 @@ function setupDefaultDatabase(sanctuary) {
   appData = {
     adminMessage: "La resonancia de cada vínculo propaga la soberanía en la red cósmica.",
     currentAdminRole: 'HADES',
+    manualAdminOverride: false,
     users: [
       {
         username: '@TheHades',
@@ -900,6 +942,36 @@ function latLonToVector3(lat, lon, radius = EARTH_RADIUS) {
   return new THREE.Vector3(x, y, z);
 }
 
+function getArmyCount(u) {
+  if (u.isAdmin) {
+    return appData.users.filter(x => !x.isAdmin).length;
+  }
+  return appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+}
+
+function getUserTierData(u) {
+  if (u.isAdmin) {
+    return { level: '∞', name: 'Deidad Absoluta', needed: 0, isMax: true };
+  }
+  const army = getArmyCount(u);
+  let tierIndex = 0;
+  for (let i = TIERS.length - 1; i >= 0; i--) {
+    if (army >= TIERS[i].minRefs) {
+      tierIndex = i;
+      break;
+    }
+  }
+  const currentTier = TIERS[tierIndex];
+  const nextTier = TIERS[tierIndex + 1];
+  const needed = nextTier ? (nextTier.minRefs - army) : 0;
+  return {
+    level: currentTier.level,
+    name: currentTier.name,
+    needed,
+    isMax: !nextTier
+  };
+}
+
 /* =========================================================
    MOTOR THREE.JS
    ========================================================= */
@@ -917,6 +989,7 @@ let isDragging = false;
 let autoRotate = true;
 let prevMouse = { x: 0, y: 0 };
 const GLOBAL_RADIUS = 75;
+const SPACE_RADIUS = 150; // Zoom out máximo para ver el mundo completo a distancia cósmica
 let spherical = { radius: GLOBAL_RADIUS, theta: 0.4, phi: 1.2 };
 let targetLook = new THREE.Vector3(0, 0, 0);
 
@@ -926,11 +999,17 @@ function applyGlobalView() {
   updateCameraPosition();
 }
 
+function applySpaceView() {
+  targetLook.set(0, 0, 0);
+  spherical.radius = SPACE_RADIUS;
+  updateCameraPosition();
+}
+
 function init3D() {
   const canvas = document.getElementById('map3d');
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0x010206);
-  scene.fog = new THREE.FogExp2(0x010206, 0.008);
+  scene.fog = new THREE.FogExp2(0x010206, 0.005);
 
   camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   applyGlobalView();
@@ -956,7 +1035,7 @@ function init3D() {
   window.addEventListener('mouseup', () => isDragging = false);
 
   window.addEventListener('wheel', (e) => {
-    spherical.radius = Math.max(35, Math.min(150, spherical.radius + e.deltaY * 0.04));
+    spherical.radius = Math.max(35, Math.min(SPACE_RADIUS, spherical.radius + e.deltaY * 0.04));
     updateCameraPosition();
   });
 
@@ -980,7 +1059,7 @@ function init3D() {
       updateCameraPosition();
     } else if (e.touches.length === 2) {
       const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-      spherical.radius = Math.max(35, Math.min(150, spherical.radius - (dist - touchDist) * 0.12));
+      spherical.radius = Math.max(35, Math.min(SPACE_RADIUS, spherical.radius - (dist - touchDist) * 0.12));
       touchDist = dist;
       updateCameraPosition();
     }
@@ -1125,17 +1204,17 @@ function rebuildSceneNetwork() {
       dotColor = isCurrent ? 0x10b981 : (isZeusMode ? 0xd97706 : 0x4ee7ff);
       emissiveColor = dotColor;
 
-      const followers = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+      const army = getArmyCount(u);
       let tierIndex = 0;
       for (let i = TIERS.length - 1; i >= 0; i--) {
-        if (followers >= TIERS[i].minRefs) {
+        if (army >= TIERS[i].minRefs) {
           tierIndex = i;
           break;
         }
       }
 
-      const minRadius = 0.18;
-      const maxRadius = ADMIN_NODE_RADIUS * 0.5;
+      const minRadius = 0.09;
+      const maxRadius = ADMIN_NODE_RADIUS * 0.25;
       const factor = tierIndex / (TIERS.length - 1);
       nodeRadius = minRadius + (maxRadius - minRadius) * factor;
 
@@ -1143,7 +1222,7 @@ function rebuildSceneNetwork() {
       ringOuter = nodeRadius * 1.65;
     }
 
-    const dotGeo = new THREE.SphereGeometry(nodeRadius, isAdmin ? 20 : 14, isAdmin ? 20 : 14);
+    const dotGeo = new THREE.SphereGeometry(nodeRadius, isAdmin ? 20 : 12, isAdmin ? 20 : 12);
     const dotMat = new THREE.MeshStandardMaterial({
       color: dotColor,
       emissive: emissiveColor,
@@ -1154,7 +1233,7 @@ function rebuildSceneNetwork() {
     const sphere = new THREE.Mesh(dotGeo, dotMat);
     group.add(sphere);
 
-    const haloGeo = new THREE.RingGeometry(ringInner, ringOuter, isAdmin ? 32 : 16);
+    const haloGeo = new THREE.RingGeometry(ringInner, ringOuter, isAdmin ? 32 : 14);
     const haloMat = new THREE.MeshBasicMaterial({
       color: isAdmin ? (isZeusMode ? 0xffb703 : 0x1d3557) : dotColor,
       side: THREE.DoubleSide,
@@ -1277,6 +1356,7 @@ function handleNodeClick(e) {
   if (intersects.length > 0) {
     const uname = intersects[0].object.parent.userData.username;
     updateInspectorCard(uname);
+    openInspector();
   }
 }
 
@@ -1284,15 +1364,30 @@ function updateInspectorCard(uname) {
   const u = appData.users.find(x => x.username.toLowerCase() === uname.toLowerCase());
   if (!u) return;
 
-  const refsCount = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
+  const army = getArmyCount(u);
+  const tierData = getUserTierData(u);
 
   document.getElementById('inspName').textContent = u.username;
   document.getElementById('inspGender').textContent = u.isAdmin ? 'Dios' : (u.gender || 'No especificado');
   document.getElementById('inspCity').textContent = u.city;
   document.getElementById('inspCoords').textContent = `${u.lat.toFixed(4)}°, ${u.lon.toFixed(4)}°`;
   document.getElementById('inspParent').textContent = u.parent || (u.isAdmin ? 'Soberano Absoluto' : 'Ninguno');
-  document.getElementById('inspRefs').textContent = refsCount;
-  document.getElementById('nodeInspector').style.display = 'block';
+  document.getElementById('inspRefs').textContent = army;
+
+  const levelRow = document.getElementById('inspLevelRow');
+  const nextRow = document.getElementById('inspNextRow');
+
+  if (u.isAdmin) {
+    document.getElementById('inspLevel').textContent = 'Nv. ∞ — Deidad Absoluta';
+    nextRow.style.display = 'none';
+  } else {
+    levelRow.style.display = 'block';
+    nextRow.style.display = 'block';
+    document.getElementById('inspLevel').textContent = `Nv.${tierData.level} — ${tierData.name}`;
+    document.getElementById('inspNext').textContent = tierData.isMax
+      ? 'Rango Máximo Alcanzado'
+      : `Faltan ${tierData.needed} guerreros`;
+  }
 }
 
 function onResize() {
@@ -1392,30 +1487,20 @@ function updateLeaderboard() {
   const mortals = appData.users.filter(u => !u.isAdmin);
 
   const scored = mortals.map(u => {
-    const followers = appData.users.filter(x => x.parent && x.parent.toLowerCase() === u.username.toLowerCase()).length;
-    
-    let tierIndex = 0;
-    for (let i = TIERS.length - 1; i >= 0; i--) {
-      if (followers >= TIERS[i].minRefs) {
-        tierIndex = i;
-        break;
-      }
-    }
-    const currentTier = TIERS[tierIndex];
-    const nextTier = TIERS[tierIndex + 1];
-    const needed = nextTier ? (nextTier.minRefs - followers) : 0;
+    const army = getArmyCount(u);
+    const tierData = getUserTierData(u);
 
     return {
       username: u.username,
-      followers,
-      tier: currentTier.name,
-      level: currentTier.level,
-      needed,
-      isMax: !nextTier
+      army,
+      tier: tierData.name,
+      level: tierData.level,
+      needed: tierData.needed,
+      isMax: tierData.isMax
     };
   });
 
-  scored.sort((a, b) => b.followers - a.followers);
+  scored.sort((a, b) => b.army - a.army);
   const topPlayers = scored.slice(0, 5);
 
   if (topPlayers.length === 0) {
@@ -1427,11 +1512,11 @@ function updateLeaderboard() {
     <div class="leader-item">
       <div>
         <span class="name">${p.username}</span>
-        <div style="font-size:0.58rem; color:var(--muted);">${p.followers} seguidores</div>
+        <div style="font-size:0.56rem; color:var(--muted);">${p.army} guerreros</div>
       </div>
       <div class="tier-info">
         <div><span>Nv.${p.level}</span> ${p.tier}</div>
-        <div>${p.isMax ? 'Máximo Rango' : `Faltan <span>${p.needed}</span> refs`}</div>
+        <div>${p.isMax ? 'Rango Máximo' : `Faltan <span>${p.needed}</span>`}</div>
       </div>
     </div>
   `).join('');
@@ -1474,7 +1559,7 @@ window.requestDeleteUser = function(targetUsername) {
   document.getElementById('deleteUserOverlay').classList.add('hidden');
   openConfirmModal(
     'PURGAR NODO',
-    `¿Deseas desterrar irrevocablemente a ${targetUsername}? Esta acción se guardará de forma permanente y sus referidos se reasignarán a ti.`,
+    `¿Deseas desterrar irrevocablemente a ${targetUsername}? Esta acción se guardará de forma permanente y sus tropas se reasignarán a ti.`,
     () => executeDeleteUser(targetUsername)
   );
 };
@@ -1518,6 +1603,59 @@ function executeResetNetwork() {
   updateLeaderboard();
   applyGlobalView();
   showToast('Red reiniciada de forma definitiva.');
+}
+
+/* =========================================================
+   CONTROLADORES DEL DOCK INFERIOR
+   ========================================================= */
+function closeAllPopups() {
+  document.getElementById('leaderboardCard').classList.remove('open');
+  document.getElementById('nodeInspector').classList.remove('open');
+  document.getElementById('dockGearMenu').classList.remove('open');
+  document.getElementById('btnDockCrown').classList.remove('active');
+  document.getElementById('btnDockProfile').classList.remove('active');
+  document.getElementById('btnDockGear').classList.remove('active');
+}
+
+function toggleCrown() {
+  const card = document.getElementById('leaderboardCard');
+  const btn = document.getElementById('btnDockCrown');
+  const isOpen = card.classList.contains('open');
+  closeAllPopups();
+  if (!isOpen) {
+    updateLeaderboard();
+    card.classList.add('open');
+    btn.classList.add('active');
+  }
+}
+
+function openInspector() {
+  closeAllPopups();
+  document.getElementById('nodeInspector').classList.add('open');
+  document.getElementById('btnDockProfile').classList.add('active');
+}
+
+function toggleProfile() {
+  const card = document.getElementById('nodeInspector');
+  const btn = document.getElementById('btnDockProfile');
+  const isOpen = card.classList.contains('open');
+  closeAllPopups();
+  if (!isOpen && currentUser) {
+    updateInspectorCard(currentUser.username);
+    card.classList.add('open');
+    btn.classList.add('active');
+  }
+}
+
+function toggleGear() {
+  const menu = document.getElementById('dockGearMenu');
+  const btn = document.getElementById('btnDockGear');
+  const isOpen = menu.classList.contains('open');
+  closeAllPopups();
+  if (!isOpen) {
+    menu.classList.add('open');
+    btn.classList.add('active');
+  }
 }
 
 /* =========================================================
@@ -1609,49 +1747,75 @@ function setupUI() {
   document.getElementById('btnSubmitLogin').addEventListener('click', handleLogin);
   document.getElementById('btnSubmitRegister').addEventListener('click', handleRegister);
 
-  document.getElementById('chooseHades').addEventListener('click', () => {
-    selectAdminRole('HADES');
-  });
-  document.getElementById('chooseZeus').addEventListener('click', () => {
-    selectAdminRole('ZEUS');
-  });
-
-  // REPLIEGUES DE PANELES EN MÓVILES
   document.getElementById('adminBoardToggle').addEventListener('click', (e) => {
     if (e.target.closest('#btnEditAdminMsg')) return;
     document.getElementById('adminBoard').classList.toggle('collapsed');
   });
 
-  document.getElementById('leaderboardToggle').addEventListener('click', () => {
-    document.getElementById('leaderboardCard').classList.toggle('collapsed');
+  document.getElementById('btnDockCrown').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCrown();
   });
 
-  const gearBtn = document.getElementById('btnAdminGear');
-  const gearMenu = document.getElementById('adminGearMenu');
-  const gearProfileSelect = document.getElementById('gearProfileSelect');
-  const gearActionSelect = document.getElementById('gearActionSelect');
-
-  gearBtn.addEventListener('click', (e) => {
+  document.getElementById('btnDockProfile').addEventListener('click', (e) => {
     e.stopPropagation();
-    gearMenu.classList.toggle('open');
+    toggleProfile();
+  });
+
+  document.getElementById('btnDockGear').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleGear();
   });
 
   document.addEventListener('click', (e) => {
-    if (!gearMenu.contains(e.target) && e.target !== gearBtn) {
-      gearMenu.classList.remove('open');
+    if (!e.target.closest('.dock-btn-wrapper') && !e.target.closest('.admin-modal-box')) {
+      closeAllPopups();
     }
   });
 
+  // CONFIGURACIONES AGRUPADAS DENTRO DEL ENGRANE
+  const chkGlobal = document.getElementById('chkGlobalView');
+  const chkSpace = document.getElementById('chkSpaceView');
+  const chkRot = document.getElementById('chkRotation');
+
+  chkGlobal.addEventListener('change', () => {
+    if (chkGlobal.checked) {
+      chkSpace.checked = false;
+      applyGlobalView();
+      showToast('Vista General Establecida');
+    }
+  });
+
+  chkSpace.addEventListener('change', () => {
+    if (chkSpace.checked) {
+      chkGlobal.checked = false;
+      applySpaceView();
+      showToast('Vista Espacial Cósmica');
+    } else {
+      chkGlobal.checked = true;
+      applyGlobalView();
+    }
+  });
+
+  chkRot.addEventListener('change', () => {
+    autoRotate = chkRot.checked;
+    showToast(autoRotate ? 'Rotación Activada' : 'Rotación Detenida');
+  });
+
+  const gearProfileSelect = document.getElementById('gearProfileSelect');
+  const gearActionSelect = document.getElementById('gearActionSelect');
+
   gearProfileSelect.addEventListener('change', () => {
     const role = gearProfileSelect.value;
+    appData.manualAdminOverride = true;
     selectAdminRole(role);
-    gearMenu.classList.remove('open');
+    closeAllPopups();
   });
 
   gearActionSelect.addEventListener('change', () => {
     const action = gearActionSelect.value;
     gearActionSelect.value = '';
-    gearMenu.classList.remove('open');
+    closeAllPopups();
 
     if (action === 'DELETE') {
       openUserDeleteModal();
@@ -1693,16 +1857,6 @@ function setupUI() {
     showToast('Mandato soberano promulgado');
   });
 
-  document.getElementById('btnRecenter').addEventListener('click', () => {
-    applyGlobalView();
-    showToast('Vista Global Establecida');
-  });
-
-  document.getElementById('btnRotateToggle').addEventListener('click', () => {
-    autoRotate = !autoRotate;
-    showToast(autoRotate ? 'Rotación Reanudada' : 'Rotación Detenida');
-  });
-
   document.getElementById('btnLogout').addEventListener('click', () => {
     currentUser = null;
 
@@ -1715,11 +1869,9 @@ function setupUI() {
     document.getElementById('ageCheck').checked = false;
     document.getElementById('termsCheck').checked = false;
 
-    document.getElementById('hudActions').classList.add('hidden');
+    closeAllPopups();
+    document.getElementById('bottomDock').classList.add('hidden');
     document.getElementById('adminBoard').classList.add('hidden');
-    document.getElementById('adminGearContainer').style.display = 'none';
-    document.getElementById('leaderboardCard').style.display = 'none';
-    document.getElementById('nodeInspector').style.display = 'none';
     document.getElementById('deleteUserOverlay').classList.add('hidden');
     document.getElementById('confirmOverlay').classList.add('hidden');
     document.getElementById('authOverlay').classList.remove('hidden');
@@ -1728,10 +1880,6 @@ function setupUI() {
 
     applyGlobalView();
     rebuildSceneNetwork();
-  });
-
-  document.getElementById('closeInsp').addEventListener('click', () => {
-    document.getElementById('nodeInspector').style.display = 'none';
   });
 
   setInterval(checkAdminHourlyShift, 30000);
@@ -1747,7 +1895,14 @@ async function handleLogin() {
 
   if (isMasterKey || (isAdminName && password === 'TheBxtmxn')) {
     document.getElementById('authOverlay').classList.add('hidden');
-    document.getElementById('adminChoiceOverlay').classList.remove('hidden');
+
+    let adminRole = appData.currentAdminRole;
+    if (!appData.manualAdminOverride) {
+      const userLon = detectedLocation ? detectedLocation.lon : -89.5926;
+      adminRole = isDaytimeAtLocation(userLon) ? 'ZEUS' : 'HADES';
+    }
+
+    selectAdminRole(adminRole);
     return;
   }
 
@@ -1783,12 +1938,9 @@ function selectAdminRole(role) {
   currentUser = rootNode;
   rebuildSceneNetwork();
 
-  document.getElementById('adminChoiceOverlay').classList.add('hidden');
-  document.getElementById('hudActions').classList.remove('hidden');
+  document.getElementById('bottomDock').classList.remove('hidden');
+  document.getElementById('adminGearControls').style.display = 'flex';
   document.getElementById('adminBoard').classList.remove('hidden');
-
-  document.getElementById('adminGearContainer').style.display = 'block';
-  document.getElementById('leaderboardCard').style.display = 'none';
 
   document.getElementById('adminBoardHeader').innerHTML = isZeus 
     ? '<i class="fas fa-bolt" style="color:#d97706;"></i> Mandato de TheZeus'
@@ -1796,6 +1948,8 @@ function selectAdminRole(role) {
 
   document.getElementById('btnEditAdminMsg').style.display = 'inline-block';
 
+  document.getElementById('chkGlobalView').checked = true;
+  document.getElementById('chkSpaceView').checked = false;
   applyGlobalView();
   updateInspectorCard(adminName);
   showToast(isZeus ? '⚡ Modo Zeus: Fondo Azul Cielo' : '🌑 Modo Hades: Abismo Puro');
@@ -1876,18 +2030,35 @@ function handleRegister() {
 
 function activateSession(user) {
   currentUser = user;
+
+  if (!appData.manualAdminOverride) {
+    const isDay = isDaytimeAtLocation(user.lon);
+    const targetRole = isDay ? 'ZEUS' : 'HADES';
+    if (appData.currentAdminRole !== targetRole) {
+      appData.currentAdminRole = targetRole;
+      const adminNode = appData.users.find(u => u.isAdmin);
+      if (adminNode) {
+        adminNode.username = isDay ? '@TheZeus' : '@TheHades';
+      }
+      saveData();
+    }
+  }
+
+  const isZeus = appData.currentAdminRole === 'ZEUS';
+  document.body.className = isZeus ? 'theme-zeus' : '';
+  apply3DTheme(isZeus);
+
   rebuildSceneNetwork();
 
   document.getElementById('authOverlay').classList.add('hidden');
-  document.getElementById('hudActions').classList.remove('hidden');
+  document.getElementById('bottomDock').classList.remove('hidden');
+  document.getElementById('adminGearControls').style.display = 'none';
   document.getElementById('adminBoard').classList.remove('hidden');
-
-  document.getElementById('adminGearContainer').style.display = 'none';
   document.getElementById('btnEditAdminMsg').style.display = 'none';
 
-  document.getElementById('leaderboardCard').style.display = 'block';
   updateLeaderboard();
-
+  document.getElementById('chkGlobalView').checked = true;
+  document.getElementById('chkSpaceView').checked = false;
   applyGlobalView();
   updateInspectorCard(user.username);
 }
@@ -1903,6 +2074,7 @@ window.addEventListener('DOMContentLoaded', () => {
   initDatabase();
   init3D();
   setupUI();
+  getRealLocation();
 });
 
 })();
